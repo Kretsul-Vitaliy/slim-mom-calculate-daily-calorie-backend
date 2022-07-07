@@ -10,7 +10,7 @@ class EmailService {
         this.link = 'http://localhost:5000';
         break;
       case 'production':
-        this.link = 'https://slimcalculatebackend.herokuapp.com/';
+        this.link = 'https://slimcalculatebackend.herokuapp.com';
         break;
       default:
         this.link = 'http://localhost:3000';
