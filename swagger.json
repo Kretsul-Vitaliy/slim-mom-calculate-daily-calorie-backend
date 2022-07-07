@@ -1,0 +1,352 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "version": "1.0.0",
+    "title": "Connections API SlimMom",
+
+    "license": {
+      "name": "API SlimMom v.1.0 Website ",
+      "url": "https://slimcalculatebackend.herokuapp.com/"
+    }
+  },
+  "servers": [{ "url": "https://slimcalculatebackend.herokuapp.com" }],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Authorization endpoints"
+    },
+    {
+      "name": "Products",
+      "description": "Search specified product endpoint"
+    },
+    {
+      "name": "Users",
+      "description": "User endpoint"
+    }
+  ],
+  "paths": {
+    "/api/v1/auth/signup": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "User registration",
+        "parameters": [],
+        "requestBody": {
+          "description": "Registration object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegistrationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegistrationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {}
+          },
+          "409": {
+            "description": "Email is already exist",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "User login",
+        "parameters": [],
+        "requestBody": {
+          "description": "Login object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {}
+          },
+          "401": {
+            "description": "Email or password is wrong",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/api/v1/auth/logout": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "User logout",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Success",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/api/v1/products?search={название}": {
+      "get": {
+        "tags": ["Products"],
+        "summary": "Get specified product",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductsResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
+          }
+        }
+      }
+    },
+
+    "/api/v1/users/current": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "User info",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserInfo"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No user found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/api/v1/users/verify": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "repeat email for verify",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Verification has already been passed",
+            "content": {}
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/api/v1/users/verify/:token": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "verify",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/verifyEmail"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No user found",
+            "content": {}
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "RegistrationRequest": {
+        "type": "object",
+        "required": ["name", "login", "password"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "User's name",
+            "example": "test"
+          },
+          "login": {
+            "type": "string",
+            "description": "User's login",
+            "example": "test@test.com"
+          },
+          "password": {
+            "type": "string",
+            "description": "User's password",
+            "example": "testqwe123"
+          }
+        }
+      },
+      "RegistrationResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Registartion status",
+            "example": "success"
+          }
+        }
+      },
+
+      "UserInfo": {
+        "type": "object",
+        "required": ["currentWeight", "height", "age", "desiredWeight", "bloodType"],
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "info user",
+            "example": "success"
+          },
+          "currentWeight": {
+            "type": "number",
+            "description": "User's current weight",
+            "example": "60"
+          },
+          "height": {
+            "type": "number",
+            "description": "User's height",
+            "example": "165"
+          },
+          "age": {
+            "type": "number",
+            "description": "User's age",
+            "example": "25"
+          },
+          "desiredWeight": {
+            "type": "number",
+            "description": "User's desired weight",
+            "example": "55"
+          },
+          "bloodType": {
+            "type": "number",
+            "description": "User's blood type",
+            "example": "4"
+          }
+        }
+      },
+      "verifyEmail": {
+        "type": "object",
+        "required": ["verificationTokenEmail"],
+        "properties": {
+          "verificationTokenEmail": {
+            "type": "string",
+            "description": "verification token Email",
+            "example": "c729c276-850f-4dbe-aaf1-003d7195ac95"
+          }
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "required": ["login", "password"],
+        "properties": {
+          "login": {
+            "type": "string",
+            "description": "User's login",
+            "example": "test@test.com"
+          },
+          "password": {
+            "type": "string",
+            "description": "User's password",
+            "example": "testqwe123"
+          }
+        }
+      },
+      "LoginResponse": {
+        "type": "object",
+        "required": ["login", "password"],
+        "properties": {
+          "login": {
+            "type": "string",
+            "description": "User's login",
+            "example": "test"
+          },
+          "token": {
+            "type": "string",
+            "description": "User's token",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyYzY0N2EzMWU0ZGFmNTA1NTE0MzQ1OCIsImlhdCI6MTY1NzE2MTc5MSwiZXhwIjoxNjU3MTY1MzkxfQ.UkCkSm5CZBDmGJ7gXBJWlQxdRt3udhbtVe7ROefW0B8"
+          }
+        }
+      },
+      "ProductsResponse": {
+        "type": "object",
+        "properties": {
+          "Products": {
+            "type": "object",
+            "description": "data",
+            "example": "<Name of the product>"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

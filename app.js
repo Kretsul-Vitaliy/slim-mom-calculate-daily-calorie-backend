@@ -1,9 +1,10 @@
 const express = require('express');
 const logger = require('morgan');
 const cors = require('cors');
-// require('dotenv').config(); // -r dotenv/config
-const path = require('path');
 const helmet = require('helmet');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
+const path = require('path');
 const { routesAuth, routesProducts, routesUsers } = require('./routes');
 const { LIMIT_JSON, LIMIT_FORM } = require('./libs');
 
@@ -25,7 +26,7 @@ app.use((req, res, next) => {
 app.use('/api/v1/auth', routesAuth);
 app.use('/api/v1/users', routesUsers);
 app.use('/api/v1/products', routesProducts);
-
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use((req, res) => {
   res.status(404).json({ message: 'Not found' });
 });
