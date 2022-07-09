@@ -11,6 +11,7 @@ const productSchema = new Schema(
       ru: { type: String, required: [true, 'Встановіть ім^я продукту'] },
       ua: { type: String, required: [true, 'Встановіть ім^я продукту'] },
     },
+    
     categories: [{ type: String }],
     calories: { type: Number, required: [true, 'Встановіть калорії продукту'] },
     groupBloodNotAllowed: {
@@ -23,14 +24,6 @@ const productSchema = new Schema(
   {
     versionKey: false,
     timestamps: true,
-    toJSON: {
-      virtuals: true,
-      transform: function (doc, ret) {
-        delete ret._id;
-        return ret;
-      },
-    },
-    toObject: { virtuals: true },
   },
 );
 

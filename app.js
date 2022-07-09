@@ -5,7 +5,7 @@ const helmet = require('helmet');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 const path = require('path');
-const { routesAuth, routesProducts, routesUsers } = require('./routes');
+const { routesAuth, routesProducts, routesUsers, routesDailyCalories } = require('./routes');
 const { LIMIT_JSON, LIMIT_FORM } = require('./libs');
 
 const formatsLogger = process.env.NODE_ENV === 'development' ? 'dev' : 'short';
@@ -26,7 +26,9 @@ app.use((req, res, next) => {
 app.use('/api/v1/auth', routesAuth);
 app.use('/api/v1/users', routesUsers);
 app.use('/api/v1/products', routesProducts);
+app.use('/api/v1/dailycalories', routesDailyCalories);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 app.use((req, res) => {
   res.status(404).json({ message: 'Not found' });
 });
