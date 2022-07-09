@@ -37,8 +37,19 @@ const addDailyCalories = async (body, userId) => {
 
   return result;
   };
+
+  
+  const getDailyCalories = async (body) => {
+
+    const dailyCaloriesAndCategories = await calculateDailyCalories(body);
+  
+    const {dailiCalories, categories} = dailyCaloriesAndCategories;
+
+    return {dailiCalories, categories}
+    };
   
   
   module.exports = {
     addDailyCalories,
+    getDailyCalories
   };

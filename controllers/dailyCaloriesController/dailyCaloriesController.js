@@ -23,5 +23,24 @@ class DailyCaloriesController {
     }
   }
 
+  async getDailyCalories(req, res, next) {
+    try {
+      
+      const body = req.body;
+
+      const dailyCalories = await repositoryDailyCalories.getDailyCalories(body);
+
+      res.json({
+        status: 'success',
+        code: HttpStatusCode.OK,
+        data: {
+          ...dailyCalories,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
 }
 module.exports = new DailyCaloriesController();
