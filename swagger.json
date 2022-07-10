@@ -267,7 +267,7 @@
       }
     },
     "/api/v1/users/verify": {
-      "get": {
+      "post": {
         "tags": ["Users"],
         "summary": "repeat email for verify",
         "parameters": [],
