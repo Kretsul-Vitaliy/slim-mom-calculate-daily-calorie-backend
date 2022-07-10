@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/Kretsul-Vitaliy/slim-mom-calculate-daily-calorie-backend#readme",
   "dependencies": {
+    "axios": "^0.27.2",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
@@ -38,6 +39,7 @@
     "mongoose": "^6.4.3",
     "morgan": "^1.10.0",
     "nodemailer": "^6.7.7",
+    "query-string": "^7.1.1",
     "swagger-ui-express": "^4.4.0"
   },
   "devDependencies": {

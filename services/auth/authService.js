@@ -32,6 +32,11 @@ class AuthService {
   async setToken(id, token) {
     await repositoryUsers.updateToken(id, token);
   }
+
+  async getUserFromGoogle(email) {
+    const user = await repositoryUsers.findByEmail(email);
+    return user;
+  }
 }
 
 module.exports = new AuthService();

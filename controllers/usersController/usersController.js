@@ -1,6 +1,7 @@
 const { BadRequest, ServiceUnavailable } = require('http-errors');
 const { HttpStatusCode } = require('../../libs');
 const { repositoryUsers } = require('../../repository');
+const { authService } = require('../../services/auth');
 const { EmailService, SenderNodemailer } = require('../../services/email');
 
 class UsersController {
@@ -29,9 +30,12 @@ class UsersController {
       const userFromToken = await repositoryUsers.findByVerifyToken(verifyToken);
       if (userFromToken) {
         await repositoryUsers.updateVerify(userFromToken.id, true);
+        const token = await authService.getToken(userFromToken);
+        await authService.setToken(userFromToken.id, token);
         return res
           .status(HttpStatusCode.OK)
-          .json({ status: 'success', code: HttpStatusCode.OK, data: { message: 'Verification successful' } });
+          .json({ status: 'success', code: HttpStatusCode.OK, data: { message: 'Verification successful' } })
+          .redirect(`${process.env.FRONTEND_URL}/google?email=${userFromToken.email}&token=${token}`);
       }
       throw new BadRequest('User not found');
     } catch (error) {
