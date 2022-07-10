@@ -7,7 +7,6 @@
       "name": "API SlimMom v.1.0 Website ",
       "url": "https://slimcalculatebackend.herokuapp.com/"
     }
-
   },
   "servers": [{ "url": "https://slimcalculatebackend.herokuapp.com" }],
   "tags": [
@@ -224,8 +223,7 @@
       "get": {
         "tags": ["Products"],
         "summary": "Get specified product",
-        "parameters": [
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Success",
@@ -279,7 +277,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserResponse"
+                  "$ref": "#/components/schemas/UserVerifyResponse"
                 }
               }
             }
@@ -369,7 +367,7 @@
     "schemas": {
       "DailyCaloriesRequest": {
         "type": "object",
-        "required": ["height", "desiredWeight", "age","currentWeight", "bloodType"],
+        "required": ["height", "desiredWeight", "age", "currentWeight", "bloodType"],
         "properties": {
           "height": {
             "type": "number",
@@ -400,7 +398,7 @@
       },
       "AddProductRequest": {
         "type": "object",
-        "required": ["height", "weight", "calories","date"],
+        "required": ["height", "weight", "calories", "date"],
         "properties": {
           "nameProduct": {
             "type": "string",
@@ -449,15 +447,14 @@
           },
           "owner": {
             "type": "string",
-            "description":"User id", 
+            "description": "User id",
             "example": "62c6bf8d4b607ce4bf2e4deb"
           }
-
         }
       },
       "DailyCaloriesPublicRequest": {
         "type": "object",
-        "required": ["height", "desiredWeight", "age","currentWeight", "bloodType"],
+        "required": ["height", "desiredWeight", "age", "currentWeight", "bloodType"],
         "properties": {
           "height": {
             "type": "number",
@@ -518,15 +515,11 @@
           "categories": {
             "type": "array",
             "description": "Categories product",
-            "example": [
-                "мясо",
-                "мучные",
-                "молочные"
-            ]
+            "example": ["мясо", "мучные", "молочные"]
           },
           "owner": {
             "type": "string",
-            "description":"User id", 
+            "description": "User id",
             "example": "62c6bf8d4b607ce4bf2e4deb"
           }
         }
@@ -542,11 +535,7 @@
           "categories": {
             "type": "array",
             "description": "Categories product",
-            "example": [
-                "мясо",
-                "мучные",
-                "молочные"
-            ]
+            "example": ["мясо", "мучные", "молочные"]
           }
         }
       },
@@ -560,7 +549,6 @@
           }
         }
       },
-
       "UserInfo": {
         "type": "object",
         "required": ["currentWeight", "height", "age", "desiredWeight", "bloodType"],
@@ -599,7 +587,7 @@
       },
       "SearchProductsByDate": {
         "type": "object",
-        "required": ["nameProduct","weight", "calories", "date", "owner" ],
+        "required": ["nameProduct", "weight", "calories", "date", "owner"],
         "properties": {
           "nameProduct": {
             "type": "string",
@@ -623,14 +611,14 @@
           },
           "owner": {
             "type": "string",
-            "description":"User id", 
+            "description": "User id",
             "example": "62c6bf8d4b607ce4bf2e4deb"
           }
         }
       },
       "RemoveProductsByIdRespose": {
         "type": "object",
-        "required": ["nameProduct","weight", "calories", "date", "owner" ],
+        "required": ["nameProduct", "weight", "calories", "date", "owner"],
         "properties": {
           "nameProduct": {
             "type": "string",
@@ -654,7 +642,7 @@
           },
           "owner": {
             "type": "string",
-            "description":"User id", 
+            "description": "User id",
             "example": "62c6bf8d4b607ce4bf2e4deb"
           }
         }
@@ -667,6 +655,16 @@
             "type": "string",
             "description": "verification token Email",
             "example": "c729c276-850f-4dbe-aaf1-003d7195ac95"
+          }
+        }
+      },
+      "UserVerifyResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Verification successful",
+            "example": "success"
           }
         }
       },
