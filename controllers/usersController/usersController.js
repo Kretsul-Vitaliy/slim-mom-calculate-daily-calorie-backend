@@ -30,12 +30,12 @@ class UsersController {
       const userFromToken = await repositoryUsers.findByVerifyToken(verifyToken);
       if (userFromToken) {
         await repositoryUsers.updateVerify(userFromToken.id, true);
-        const token = await authService.getToken(userFromToken);
-        await authService.setToken(userFromToken.id, token);
+        // const token = await authService.getToken(userFromToken);
+        // await authService.setToken(userFromToken.id, token);
         return res
           .status(HttpStatusCode.OK)
-          .json({ status: 'success', code: HttpStatusCode.OK, data: { message: 'Verification successful' } })
-          .redirect(`${process.env.FRONTEND_URL}/google?email=${userFromToken.email}&token=${token}`);
+          .json({ status: 'success', code: HttpStatusCode.OK, data: { message: 'Verification successful' } });
+        // .redirect(`${process.env.FRONTEND_URL}/google?email=${userFromToken.email}&token=${token}`);
       }
       throw new BadRequest('User not found');
     } catch (error) {
