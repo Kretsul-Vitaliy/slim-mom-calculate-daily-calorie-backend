@@ -23,6 +23,7 @@ app.use((req, res, next) => {
   app.set('lang', req.acceptsLanguages(['en', 'uk']));
   next();
 });
+
 app.use('/api/v1/auth', routesAuth);
 app.use('/api/v1/users', routesUsers);
 app.use('/api/v1/products', routesProducts);
