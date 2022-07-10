@@ -294,7 +294,7 @@
       }
     },
     "/api/v1/users/verify/:token": {
-      "post": {
+      "get": {
         "tags": ["Users"],
         "summary": "verify",
         "parameters": [],
