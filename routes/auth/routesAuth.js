@@ -13,17 +13,7 @@ router.post(
 );
 router.post('/login', validationWraperSchema(joiUserLoginSchema), authController.loginUser);
 router.post('/logout', guard, authController.logoutUser);
-router.get(
-  '/google',
-  limiter(LIMITIER_TIME, LIMITIER_COUNT),
-  validationWraperSchema(joiUserSignUpSchema),
-  authController.signupAuthGoogle,
-);
-router.get(
-  '/google-redirect',
-  limiter(LIMITIER_TIME, LIMITIER_COUNT),
-  validationWraperSchema(joiUserSignUpSchema),
-  authController.signupGoogleRedirect,
-);
+router.get('/google', limiter(LIMITIER_TIME, LIMITIER_COUNT), authController.signupAuthGoogle);
+router.get('/google-redirect', limiter(LIMITIER_TIME, LIMITIER_COUNT), authController.signupGoogleRedirect);
 
 module.exports = router;
