@@ -168,18 +168,18 @@
         }
       }
     },
-    "/api/v1/auth/login": {
+    "/api/v1/auth/email": {
       "post": {
         "tags": ["Auth"],
-        "summary": "User login",
+        "summary": "User email",
         "parameters": [],
         "requestBody": {
-          "description": "Login object",
+          "description": "email object",
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/LoginRequest"
+                "$ref": "#/components/schemas/emailRequest"
               }
             }
           }
@@ -190,7 +190,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoginResponse"
+                  "$ref": "#/components/schemas/emailResponse"
                 }
               }
             }
@@ -485,16 +485,16 @@
       },
       "RegistrationRequest": {
         "type": "object",
-        "required": ["name", "login", "password"],
+        "required": ["name", "email", "password"],
         "properties": {
           "name": {
             "type": "string",
             "description": "User's name",
             "example": "test"
           },
-          "login": {
+          "email": {
             "type": "string",
-            "description": "User's login",
+            "description": "User's email",
             "example": "test@test.com"
           },
           "password": {
@@ -661,20 +661,20 @@
       "UserVerifyResponse": {
         "type": "object",
         "properties": {
-          "message": {
+          "email": {
             "type": "string",
-            "description": "Verification successful",
-            "example": "success"
+            "description": "User's email",
+            "example": "test@test.com"
           }
         }
       },
-      "LoginRequest": {
+      "emailRequest": {
         "type": "object",
-        "required": ["login", "password"],
+        "required": ["email", "password"],
         "properties": {
-          "login": {
+          "email": {
             "type": "string",
-            "description": "User's login",
+            "description": "User's email",
             "example": "test@test.com"
           },
           "password": {
@@ -684,13 +684,13 @@
           }
         }
       },
-      "LoginResponse": {
+      "emailResponse": {
         "type": "object",
-        "required": ["login", "password"],
+        "required": ["email", "password"],
         "properties": {
-          "login": {
+          "email": {
             "type": "string",
-            "description": "User's login",
+            "description": "User's email",
             "example": "test"
           },
           "token": {
