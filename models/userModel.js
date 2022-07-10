@@ -23,7 +23,8 @@ const userSchema = new Schema(
   {
     name: {
       type: String,
-      required: [true, 'Необхідно вказати ваше ім^я '],
+      default: 'Guest',
+      // required: [true, 'Необхідно вказати ваше ім^я '],
       match: nameRegexp,
     },
     password: {
@@ -132,7 +133,7 @@ const joiUserLoginSchema = Joi.object({
   email: Joi.string().pattern(emailRegexp).required(),
 });
 const joiUserSignUpSchema = Joi.object({
-  name: Joi.string().pattern(nameRegexp).min(3).max(30).required(),
+  name: Joi.string().pattern(nameRegexp).min(3).max(30).optional(),
   password: Joi.string().min(6).required(),
   email: Joi.string().pattern(emailRegexp).required(),
 });
