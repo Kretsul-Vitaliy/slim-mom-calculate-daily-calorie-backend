@@ -1,7 +1,7 @@
 const { BadRequest, ServiceUnavailable } = require('http-errors');
 const { HttpStatusCode } = require('../../libs');
 const { repositoryUsers } = require('../../repository');
-const { authService } = require('../../services/auth');
+// const { authService } = require('../../services/auth');
 const { EmailService, SenderNodemailer } = require('../../services/email');
 
 class UsersController {
