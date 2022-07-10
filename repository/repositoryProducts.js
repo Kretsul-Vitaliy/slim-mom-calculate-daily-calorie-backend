@@ -12,7 +12,7 @@ return result;
 }
 
 const removeProduct = async (id, userId) => {
-const deleteProduct = await ProductOnDayModel.findOneAndRemove({id, owner:userId});
+const deleteProduct = await ProductOnDayModel.findOneAndRemove({id, owner:userId},{new:true,runValidators:true});
 return deleteProduct;
 }
 

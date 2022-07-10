@@ -1,6 +1,6 @@
 const { repositoryProducts } = require('../../repository');
 const { HttpStatusCode } = require('../../libs');
-const { BadRequest} = require('http-errors');
+const { NotFound} = require('http-errors');
 
 class ProductsController {
   
@@ -44,7 +44,7 @@ class ProductsController {
       const product = await repositoryProducts.removeProduct(id, userId);
 
       if(!product) {
-        throw new BadRequest('Cannot remove with ID');
+        throw new NotFound('Cannot remove with ID');
       }
       
       res.json({
@@ -65,6 +65,10 @@ class ProductsController {
       const userId = req.user.id;
       const {date} = req.params;
       const product = await repositoryProducts.getAllProducts(date, userId);
+      if(!product) {
+        throw new NotFound('Not found product by date');
+      }
+
       res.json({
         status: 'success',
         code: HttpStatusCode.OK,
