@@ -4,7 +4,7 @@ class EmailService {
     this.sender = sender;
     switch (env) {
       case 'development':
-        this.link = 'http://localhost:3000';
+        this.link = 'http://localhost:5000';
         break;
       case 'test':
         this.link = 'http://localhost:5000';
@@ -13,7 +13,7 @@ class EmailService {
         this.link = 'https://slimcalculatebackend.herokuapp.com';
         break;
       default:
-        this.link = 'http://localhost:3000';
+        this.link = 'http://localhost:5000';
     }
   }
 
