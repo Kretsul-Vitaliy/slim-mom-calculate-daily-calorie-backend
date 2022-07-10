@@ -9,7 +9,7 @@
       "url": "https://slimcalculatebackend.herokuapp.com/"
     }
   },
-  "servers": [{ "url": "https://slimcalculatebackend.herokuapp.com" }],
+  "servers": [{ "url": "http://localhost:3000" }],
   "tags": [
     {
       "name": "Auth",
