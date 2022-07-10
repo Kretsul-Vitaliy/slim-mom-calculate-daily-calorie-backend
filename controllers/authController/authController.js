@@ -87,9 +87,7 @@ class AuthController {
         access_type: 'offline',
         promt: 'consent',
       });
-      return res
-        .status(HttpStatusCode.OK)
-        .redirect(`https://accounts.google.com/o/oauth2/v2/auth?${stringifieldParams}`);
+      return res.redirect(`https://accounts.google.com/o/oauth2/v2/auth?${stringifieldParams}`);
     } catch (error) {
       next(error);
     }
@@ -130,37 +128,18 @@ class AuthController {
         const accessToken = await authService.getToken(newUser);
         await authService.setToken(newUser.id, accessToken);
         await repositoryUsers.updateVerify(createUser.id, true);
-        return res
-          .status(HttpStatusCode.CREATED)
-          .json({
-            status: 'success',
-            code: HttpStatusCode.CREATED,
-            data: {
-              ...newUser,
-              isSendEmailVerify: true,
-            },
-          })
-          .redirect(
-            `${process.env.FRONTEND_URL}/google?email=${userData.data.email}&avatarURL=${userData.data.picture}&token=${accessToken}`,
-          );
+        return res.redirect(
+          `${process.env.FRONTEND_URL}/google?email=${userData.data.email}&avatarURL=${userData.data.picture}&token=${accessToken}`,
+        );
       }
 
       const userInDataBase = await authService.getUserFromGoogle(email);
       const accessToken = await authService.getToken(userInDataBase);
       await authService.setToken(userInDataBase.id, accessToken);
 
-      return res
-        .status(HttpStatusCode.OK)
-        .json({
-          status: 'success',
-          code: HttpStatusCode.OK,
-          data: {
-            accessToken,
-          },
-        })
-        .redirect(
-          `${process.env.FRONTEND_URL}/google?email=${userInDataBase.email}&avatarURL=${userInDataBase.avatarURL}&token=${accessToken}`,
-        );
+      return res.redirect(
+        `${process.env.FRONTEND_URL}/google?email=${userInDataBase.email}&avatarURL=${userInDataBase.avatarURL}&token=${accessToken}`,
+      );
     } catch (error) {
       next(error);
     }
