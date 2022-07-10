@@ -5,7 +5,7 @@ const helmet = require('helmet');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 const path = require('path');
-const { routesAuth, routesProducts, routesUsers, routesDailyCalories } = require('./routes');
+const { routesAuth, routesProducts, routesUsers, routesDailyCalories, routesAuthGoogle } = require('./routes');
 const { LIMIT_JSON, LIMIT_FORM } = require('./libs');
 
 const formatsLogger = process.env.NODE_ENV === 'development' ? 'dev' : 'short';
@@ -24,6 +24,7 @@ app.use((req, res, next) => {
   next();
 });
 app.use('/api/v1/auth', routesAuth);
+app.use('/api/v1/auth', routesAuthGoogle);
 app.use('/api/v1/users', routesUsers);
 app.use('/api/v1/products', routesProducts);
 app.use('/api/v1/dailycalories', routesDailyCalories);
