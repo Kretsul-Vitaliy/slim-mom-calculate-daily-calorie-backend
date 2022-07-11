@@ -83,7 +83,7 @@ class AuthController {
           'https://www.googleapis.com/auth/userinfo.email',
           'https://www.googleapis.com/auth/userinfo.profile',
         ].join(' '),
-        response_tyoe: 'code',
+        response_type: 'code',
         access_type: 'offline',
         promt: 'consent',
       });
