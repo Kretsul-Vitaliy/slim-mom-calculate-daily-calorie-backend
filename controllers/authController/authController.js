@@ -42,13 +42,17 @@ class AuthController {
       }
 
       const token = authService.getToken(authentificationUser);
+      const refreshToken = authService.getRefreshToken();
+
       await authService.setToken(authentificationUser.id, token);
+      await authService.setRefreshToken(authentificationUser.id, refreshToken);
 
       return res.status(HttpStatusCode.OK).json({
         status: 'success',
         code: HttpStatusCode.OK,
         data: {
           token,
+          refreshToken,
         },
       });
     } catch (error) {
@@ -59,9 +63,28 @@ class AuthController {
   async logoutUser(req, res, next) {
     try {
       await authService.setToken(req.user.id, null);
+      await authService.setRefreshToken(req.user.id, null);
+      
       res.status(HttpStatusCode.NO_CONTENT).json({
         status: 'success',
         code: HttpStatusCode.NO_CONTENT,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async refreshUserAccessToken(req, res, next) {
+    try {
+      const token = authService.getToken(req.user);
+      await authService.setToken(req.user.id, token);
+
+      return res.status(HttpStatusCode.OK).json({
+        status: 'success',
+        code: HttpStatusCode.OK,
+        data: {
+          token,
+        },
       });
     } catch (error) {
       next(error);

@@ -1,6 +1,8 @@
 const { repositoryUsers } = require('../../repository');
 const jwt = require('jsonwebtoken');
-const { SECRET_KEY } = process.env;
+const { SECRET_KEY, REFRESH_SECRET_KEY } = process.env;
+
+const { randomUUID } = require('crypto');
 
 class AuthService {
   async isUserExist(email) {
@@ -25,12 +27,25 @@ class AuthService {
   getToken(user) {
     const id = user.id;
     const payload = { id };
-    const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '1h' });
+    const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '60s' });
     return token;
+  }
+
+  // копія getToken але з рандомним id, оскільки дані юзера нам не потрібні
+  getRefreshToken() {
+    const id = randomUUID();
+    const payload = { id };
+    const refreshToken = jwt.sign(payload, REFRESH_SECRET_KEY, { expiresIn: '24h' });
+    return refreshToken;
   }
 
   async setToken(id, token) {
     await repositoryUsers.updateToken(id, token);
+  }
+
+  // копія минулого
+  async setRefreshToken(id, refreshToken) {
+    await repositoryUsers.updateRefreshToken(id, refreshToken);
   }
 }
 

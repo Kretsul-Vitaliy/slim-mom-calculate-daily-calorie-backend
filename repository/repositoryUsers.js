@@ -23,6 +23,10 @@ const updateToken = async (id, token) => {
   return await UserModel.updateOne({ _id: id }, { token });
 };
 
+const updateRefreshToken = async (id, refreshToken) => {
+  return await UserModel.updateOne({ _id: id }, { refreshToken });
+};
+
 const updateVerify = async (id, status) => {
   return await UserModel.updateOne({ _id: id }, { isVerification: status, verificationTokenEmail: null });
 };
@@ -34,5 +38,6 @@ module.exports = {
   findByVerifyToken,
   create,
   updateToken,
+  updateRefreshToken,
   updateVerify,
 };
