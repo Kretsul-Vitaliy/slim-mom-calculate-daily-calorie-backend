@@ -91,7 +91,7 @@ const userSchema = new Schema(
     },
     verificationTokenEmail: {
       type: String,
-      required: [true, 'Verify token is required'],
+      // required: [true, 'Verify token is required'],
       default: randomUUID(),
     },
     role: {
