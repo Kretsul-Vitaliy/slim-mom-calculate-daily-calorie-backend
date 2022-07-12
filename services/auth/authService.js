@@ -27,11 +27,10 @@ class AuthService {
   getToken(user) {
     const id = user.id;
     const payload = { id };
-    const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '60s' });
+    const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '1h' });
     return token;
   }
 
-  // копія getToken але з рандомним id, оскільки дані юзера нам не потрібні
   getRefreshToken() {
     const id = randomUUID();
     const payload = { id };
@@ -43,7 +42,6 @@ class AuthService {
     await repositoryUsers.updateToken(id, token);
   }
 
-  // копія минулого
   async setRefreshToken(id, refreshToken) {
     await repositoryUsers.updateRefreshToken(id, refreshToken);
   }
