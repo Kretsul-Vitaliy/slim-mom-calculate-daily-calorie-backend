@@ -62,13 +62,13 @@ class AuthService {
   }
 
   async getGoogleOAuthToken(code) {
-    const link = 'http://localhost:5000';
+    // const link = 'http://localhost:5000';
     const url = 'https://oauth2.googleapis.com/token';
 
     const values = {
       client_id: process.env.GOOGLE_CLIENT_ID,
       client_secret: process.env.GOOGLE_CLIENT_SECRET,
-      redirect_uri: `${link}/api/v1/auth/google-redirect`,
+      redirect_uri: `${process.env.BASE_URL}/api/v1/auth/google-redirect`,
       grant_type: 'authorization_code',
       code,
     };
