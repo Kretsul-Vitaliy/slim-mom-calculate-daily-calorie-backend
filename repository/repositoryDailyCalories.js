@@ -20,9 +20,9 @@ const calculateDailyCalories = async (data) => {
    const categories = await categoriesNotAllowed(bloodType);
 
    const params = {height, desiredWeight, age, currentWeight};
-   const dailiCalories = formulaDailyCalories(params);
+   const dailyCalories = formulaDailyCalories(params);
 
-   return {dailiCalories, categories}
+   return {dailyCalories, categories}
 
 }
 
@@ -31,9 +31,9 @@ const addDailyCalories = async (body, userId) => {
 
   const dailyCaloriesAndCategories = await calculateDailyCalories(body);
 
-  const {dailiCalories, categories} = dailyCaloriesAndCategories;
+  const {dailyCalories, categories} = dailyCaloriesAndCategories;
   
-  const result = await DailyCalorieModel.create({calories:dailiCalories, categories, owner:userId});
+  const result = await DailyCalorieModel.create({calories:dailyCalories, categories, owner:userId});
 
   return result;
   };
@@ -43,9 +43,9 @@ const addDailyCalories = async (body, userId) => {
 
     const dailyCaloriesAndCategories = await calculateDailyCalories(body);
   
-    const {dailiCalories, categories} = dailyCaloriesAndCategories;
+    const {dailyCalories, categories} = dailyCaloriesAndCategories;
 
-    return {dailiCalories, categories}
+    return {dailyCalories, categories}
     };
   
   
