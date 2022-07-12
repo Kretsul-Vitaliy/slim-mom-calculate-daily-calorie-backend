@@ -1,14 +1,11 @@
 const { Conflict, Unauthorized } = require('http-errors');
-const queryString = require('query-string');
-// const URL = require('url');
 
 const { authService } = require('../../services/auth');
 const { HttpStatusCode } = require('../../libs');
 
 const { EmailService, SenderNodemailer } = require('../../services/email');
-const { default: axios } = require('axios');
-const { repositoryUsers } = require('../../repository');
-const { createUser } = require('../../services/auth/authService');
+
+const { sessionService } = require('../../services/session');
 
 class AuthController {
   async signupUser(req, res, next) {
@@ -75,73 +72,105 @@ class AuthController {
   }
 
   async signupAuthGoogle(req, res, next) {
+    // const link = 'http://localhost:5000';
     try {
-      const stringifieldParams = queryString.stringify({
+      const rootUrl = 'https://accounts.google.com/o/oauth2/v2/auth';
+      const options = {
+        redirect_uri: `${process.env.BASE_URL}/api/v1/auth/google-redirect`,
         client_id: process.env.GOOGLE_CLIENT_ID,
-        redirect_uri: `${process.env.BASE_URL}/auth/google-redirect`,
+        access_type: 'offline',
+        response_type: 'code',
+        promt: 'consent',
         scope: [
           'https://www.googleapis.com/auth/userinfo.email',
           'https://www.googleapis.com/auth/userinfo.profile',
         ].join(' '),
-        response_type: 'code',
-        access_type: 'offline',
-        promt: 'consent',
-      });
-      return res.redirect(`https://accounts.google.com/o/oauth2/v2/auth?${stringifieldParams}`);
+      };
+      const qs = new URLSearchParams(options);
+      return res.redirect(`${rootUrl}?${qs.toString()}`);
     } catch (error) {
       next(error);
     }
   }
 
   async signupGoogleRedirect(req, res, next) {
+    // const linkFront = 'http://localhost:3000';
+
     try {
-      const fullUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
-
-      const urlObj = new URL(fullUrl);
-      const urlParams = queryString.parse(urlObj.search);
-      const code = urlParams.code;
-      console.log('code', code);
-      const tokenData = await axios({
-        url: `https://oauth2.googleapis.com/token`,
-        method: 'post',
-        data: {
-          client_id: process.env.GOOGLE_CLIENT_ID,
-          secret: process.env.GOOGLE_CLIENT_SECRET,
-          redirect_uri: `${process.env.BASE_URL}/auth/google-redirect`,
-          grant_type: 'authorization_code',
-          code,
-        },
-      });
-
-      const userData = await axios({
-        url: 'https://www.googleapis.com/oauth2/v2/userinfo',
-        method: 'get',
-        headers: {
-          Authorization: `Bearer ${tokenData.data.access_token}`,
-        },
-      });
-      const { email, picture: avatarURL } = userData.data;
-      const isUserExist = await authService.isUserExist(email);
-
-      if (!isUserExist) {
-        const newUser = await authService.createUser({ email, avatarURL });
-        const accessToken = await authService.getToken(newUser);
-        await authService.setToken(newUser.id, accessToken);
-        await repositoryUsers.updateVerify(createUser.id, true);
-        return res.redirect(
-          `${process.env.FRONTEND_URL}/google?email=${userData.data.email}&avatarURL=${userData.data.picture}&token=${accessToken}`,
-        );
+      // get the code from qs
+      const code = req.query.code;
+      const { id_token: idToken, access_token: accessingToken } = await authService.getGoogleOAuthToken(code);
+      // get user with tokens
+      const googleUser = await authService.getGoogleUser(idToken, accessingToken);
+      if (!googleUser.verified_email) {
+        return res.status(403).send('Google account is not verified');
       }
+      // upsert the user
+      const isUserExist = await authService.isUserExist(googleUser.email);
+      if (isUserExist) {
+        const userInDataBase = await authService.getUserFromGoogle(googleUser.email);
+        const accessToken = await authService.getToken(userInDataBase);
+        await authService.setToken(userInDataBase.id, accessToken);
+        const sendUser = JSON.stringify({
+          name: userInDataBase.name,
+          email: userInDataBase.email,
+          avatarURL: userInDataBase.avatarURL,
+          token: accessToken,
+        });
+        return res.redirect(`${process.env.FRONTEND_URL}/google?user=${sendUser}`);
+      }
+      const user = await authService.createUserGoogle({
+        email: googleUser.email,
+        name: googleUser.name,
+        password: googleUser.id,
+        avatarURL: googleUser.picture,
+        isVerification: true,
+        verificationTokenEmail: null,
+      });
 
-      const userInDataBase = await authService.getUserFromGoogle(email);
-      const accessToken = await authService.getToken(userInDataBase);
-      await authService.setToken(userInDataBase.id, accessToken);
+      const accessToken = await authService.getToken(user);
+      await authService.setToken(user.id, accessToken);
+      const sendUser = JSON.stringify({
+        name: user.name,
+        email: user.email,
+        avatarURL: user.avatarURL,
+        token: accessToken,
+      });
 
-      return res.redirect(
-        `${process.env.FRONTEND_URL}/google?email=${userInDataBase.email}&avatarURL=${userInDataBase.avatarURL}&token=${accessToken}`,
-      );
+      // create a session
+      const session = await sessionService.createSession(user._id, req.get('user-agent') || '');
+
+      // create an access token
+      const accessTokenCookie = authService.signJwtAccess({ ...user, session: session._id });
+
+      // create a refresh token
+      const refreshTokenCookie = authService.signJwtRefresh({ ...user, session: session._id });
+
+      // set cookies
+      const accessTokenCookieOptions = {
+        maxAge: 900000, // 1 hours
+        httpOnly: true,
+        domain: 'localhost',
+        path: '/',
+        sameSite: 'lax',
+        secure: false,
+      };
+
+      const refreshTokenCookieOptions = {
+        ...accessTokenCookieOptions,
+        maxAge: 3.154e10, // 1 year
+      };
+
+      res.cookie('accessToken', accessTokenCookie, accessTokenCookieOptions);
+
+      res.cookie('refreshToken', refreshTokenCookie, refreshTokenCookieOptions);
+
+      // redirect back to client
+      return res.redirect(`${process.env.FRONTEND_URL}/google?user=${sendUser}`);
     } catch (error) {
-      next(error);
+      // next(error);
+      console.error(error);
+      return res.redirect(`${process.env.FRONTEND_URL}/google/error`);
     }
   }
 }

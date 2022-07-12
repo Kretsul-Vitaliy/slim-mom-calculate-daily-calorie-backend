@@ -23,8 +23,26 @@ const updateToken = async (id, token) => {
   return await UserModel.updateOne({ _id: id }, { token });
 };
 
+const refreshToken = async (id, token, refreshToken) => {
+  return await UserModel.findOneAndUpdate({ _id: id }, { token, refreshToken }, { returnDocument: 'after' });
+};
+
 const updateVerify = async (id, status) => {
   return await UserModel.updateOne({ _id: id }, { isVerification: status, verificationTokenEmail: null });
+};
+
+const updateGoogleUser = async (query, update) => {
+  await UserModel.findOne(query.email);
+  return await UserModel.findOneAndUpdate(
+    {
+      avatarURL: update.avatarURL,
+      email: update.email,
+      name: update.name,
+      isVerification: true,
+      verificationTokenEmail: null,
+    },
+    { returnDocument: 'after', runValidators: true, upsert: true, new: true },
+  );
 };
 
 module.exports = {
@@ -35,4 +53,6 @@ module.exports = {
   create,
   updateToken,
   updateVerify,
+  updateGoogleUser,
+  refreshToken,
 };

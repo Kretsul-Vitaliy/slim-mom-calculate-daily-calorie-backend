@@ -1,9 +1,8 @@
 const { repositoryProducts } = require('../../repository');
 const { HttpStatusCode } = require('../../libs');
-const { NotFound} = require('http-errors');
+const { NotFound } = require('http-errors');
 
 class ProductsController {
-  
   async getProducts(req, res, next) {
     try {
       const products = await repositoryProducts.getProductsQuery(req.query.search);
@@ -31,7 +30,6 @@ class ProductsController {
           ...product,
         },
       });
-
     } catch (error) {
       next(error);
     }
@@ -40,33 +38,11 @@ class ProductsController {
   async removeProductOnDay(req, res, next) {
     try {
       const userId = req.user.id;
-      const {id} = req.params;
+      const { id } = req.params;
       const product = await repositoryProducts.removeProduct(id, userId);
 
-      if(!product) {
+      if (!product) {
         throw new NotFound('Cannot remove with ID');
-      }
-      
-      res.json({
-          status: 'success',
-          code: HttpStatusCode.OK,
-          data: {
-            ...product,
-          },
-        });
-
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async allProductsPerDay(req, res, next) {
-    try {
-      const userId = req.user.id;
-      const {date} = req.params;
-      const product = await repositoryProducts.getAllProducts(date, userId);
-      if(!product) {
-        throw new NotFound('Not found product by date');
       }
 
       res.json({
@@ -76,11 +52,28 @@ class ProductsController {
           ...product,
         },
       });
-
     } catch (error) {
       next(error);
     }
   }
 
+  async allProductsPerDay(req, res, next) {
+    try {
+      const userId = req.user.id;
+      const { date } = req.params;
+      const product = await repositoryProducts.getAllProducts(date, userId);
+      if (!product) {
+        throw new NotFound('Not found product by date');
+      }
+
+      res.json({
+        status: 'success',
+        code: HttpStatusCode.OK,
+        data: [...product],
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 module.exports = new ProductsController();

@@ -5,6 +5,7 @@ const helmet = require('helmet');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 const path = require('path');
+const cookieParser = require('cookie-parser');
 const { routesAuth, routesProducts, routesUsers, routesDailyCalories } = require('./routes');
 const { LIMIT_JSON, LIMIT_FORM } = require('./libs');
 
@@ -14,6 +15,8 @@ app.use(helmet());
 app.use(logger(formatsLogger));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
+// Подключаем cookies
+app.use(cookieParser());
 // Подключаем обработку JSON
 app.use(express.json({ limit: LIMIT_JSON }));
 // Подключаем обработку форм
