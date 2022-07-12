@@ -72,9 +72,7 @@ class ProductsController {
       res.json({
         status: 'success',
         code: HttpStatusCode.OK,
-        data: {
-          ...product,
-        },
+        data: [...product]
       });
 
     } catch (error) {

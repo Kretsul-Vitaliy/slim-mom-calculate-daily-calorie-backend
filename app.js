@@ -7,9 +7,17 @@ const swaggerDocument = require('./swagger.json');
 const path = require('path');
 const { routesAuth, routesProducts, routesUsers, routesDailyCalories } = require('./routes');
 const { LIMIT_JSON, LIMIT_FORM } = require('./libs');
+const session = require('express-session')
 
 const formatsLogger = process.env.NODE_ENV === 'development' ? 'dev' : 'short';
 const app = express();
+
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true
+}))
+
 app.use(helmet());
 app.use(logger(formatsLogger));
 app.use(express.static(path.join(__dirname, 'public')));
