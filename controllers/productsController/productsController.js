@@ -80,5 +80,25 @@ class ProductsController {
     }
   }
 
+  async getProductsByBloodType(req, res, next) {
+    try {
+      const {type} = req.params;
+      console.log(type);
+      const product = await repositoryProducts.getAllProductsByBloodType(type);
+      if(!product) {
+        throw new NotFound('Not found products by blood type');
+      }
+
+      res.json({
+        status: 'success',
+        code: HttpStatusCode.OK,
+        data: [...product]
+      });
+
+    } catch (error) {
+      next(error);
+    }
+  }
+
 }
 module.exports = new ProductsController();

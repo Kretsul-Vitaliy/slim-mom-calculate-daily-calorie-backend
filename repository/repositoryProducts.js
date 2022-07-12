@@ -21,9 +21,17 @@ const products = await ProductOnDayModel.find({date, owner:userId});
 return products;
 }
 
+const getAllProductsByBloodType = async (bloodType) => {
+const products = await ProductModel.find();
+const filterProductsByTypeBlood = products.filter(({groupBloodNotAllowed}) => groupBloodNotAllowed[bloodType] === true)
+return filterProductsByTypeBlood;
+
+}
+
 module.exports = {
   getProductsQuery,
   addProduct,
   removeProduct, 
-  getAllProducts
+  getAllProducts,
+  getAllProductsByBloodType
 };
