@@ -4,7 +4,6 @@ const getProductsQuery = async (query, page, limit) => {
   const skip = (page - 1) * limit;
   const total = await ProductModel.find({ 'title.ua': { $regex: query, $options: 'i,x' } }).countDocuments();
   const products = await ProductModel.find({ 'title.ua': { $regex: query, $options: 'i,x' } }, "", {skip, limit: Number(limit)});
-  console.log(products)
   return { total, products };
 };
 

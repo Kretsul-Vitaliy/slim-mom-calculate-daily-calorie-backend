@@ -18,7 +18,6 @@ const productOnDaySchema = new Schema(
         ref: 'user',
       }
   },
-  
   {
     versionKey: false,
     timestamps: true,
