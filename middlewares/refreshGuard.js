@@ -22,12 +22,12 @@ const refreshGuard = async (req, res, next) => {
         }
         const isValidRefreshToken = verifyToken(refreshToken, REFRESH_SECRET_KEY);
         if (!isValidRefreshToken) {
-            throw new Unauthorized('Not authorized');
+            throw new Unauthorized('Wrong or expired token(s)');
         }
         const { id } = jwt.decode(token);
         const userAuthorizationById = await repositoryUsers.findById(id);
         if (!userAuthorizationById || userAuthorizationById.refreshToken !== refreshToken) {
-            throw new Unauthorized('Wrong token(s)');
+            throw new Unauthorized('Wrong or expired token(s)');
         }
         req.user = userAuthorizationById;
         next();
