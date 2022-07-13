@@ -4,8 +4,10 @@ const { NotFound } = require('http-errors');
 
 class ProductsController {
   async getProducts(req, res, next) {
+    const { page = 1, limit = 100, search } = req.query;
     try {
-      const products = await repositoryProducts.getProductsQuery(req.query.search);
+      const products = await repositoryProducts.getProductsQuery(search, page, limit);
+      
       res.json({
         status: 'success',
         code: HttpStatusCode.OK,
