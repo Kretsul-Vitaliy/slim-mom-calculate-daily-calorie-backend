@@ -173,6 +173,19 @@ class AuthController {
       return res.redirect(`${process.env.FRONTEND_URL}/google/error`);
     }
   }
+  
+  async refreshUserAccessToken(req, res, next) {
+    try {
+      const token = authService.getToken(req.user);
+      await authService.setToken(req.user.id, token);
+
+      return res.status(HttpStatusCode.OK).json({
+        status: 'success',
+        code: HttpStatusCode.OK,
+        data: {
+          token,
+        },
+      });
 }
 
 module.exports = new AuthController();
