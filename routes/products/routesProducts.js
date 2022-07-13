@@ -5,7 +5,7 @@ const { productOnDayJoiSchema } = require('../../models/productOnDayModel');
 
 const router = new Router();
 
-router.get('/', productsController.getProducts);
+router.get('/', productsController.getProducts); //
 router.post('/', guard, validationWraperSchema(productOnDayJoiSchema), productsController.addProductOnDay);
 router.delete('/:id', guard, productsController.removeProductOnDay);
 router.get('/:date', guard, productsController.allProductsPerDay);
