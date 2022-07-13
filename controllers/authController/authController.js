@@ -174,6 +174,23 @@ class AuthController {
     }
   }
   
+  async refreshUserAccessToken(req, res, next) {
+    try {
+      const token = authService.getToken(req.user);
+      await authService.setToken(req.user.id, token);
+
+      return res.status(HttpStatusCode.OK).json({
+        status: 'success',
+        code: HttpStatusCode.OK,
+        data: {
+          token,
+        },
+      })
+      } catch (error) {
+      next(error);
+    }
+  }
+  
 }
 
 module.exports = new AuthController();
