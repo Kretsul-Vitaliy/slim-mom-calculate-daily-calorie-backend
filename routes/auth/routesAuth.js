@@ -14,6 +14,7 @@ router.post(
 router.post('/login', validationWraperSchema(joiUserLoginSchema), authController.loginUser);
 router.post('/logout', guard, authController.logoutUser);
 router.post('/refresh', refreshGuard, authController.refreshUserAccessToken);
-
+router.get('/google', authController.signupAuthGoogle);
+router.get('/google-redirect', authController.signupGoogleRedirect);
 
 module.exports = router;

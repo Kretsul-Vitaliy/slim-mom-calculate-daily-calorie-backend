@@ -5,7 +5,8 @@ const helmet = require('helmet');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 const path = require('path');
-const { routesAuth, routesProducts, routesUsers } = require('./routes');
+const cookieParser = require('cookie-parser');
+const { routesAuth, routesProducts, routesUsers, routesDailyCalories } = require('./routes');
 const { LIMIT_JSON, LIMIT_FORM } = require('./libs');
 
 const formatsLogger = process.env.NODE_ENV === 'development' ? 'dev' : 'short';
@@ -14,6 +15,8 @@ app.use(helmet());
 app.use(logger(formatsLogger));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
+// Подключаем cookies
+app.use(cookieParser());
 // Подключаем обработку JSON
 app.use(express.json({ limit: LIMIT_JSON }));
 // Подключаем обработку форм
@@ -23,10 +26,13 @@ app.use((req, res, next) => {
   app.set('lang', req.acceptsLanguages(['en', 'uk']));
   next();
 });
+
 app.use('/api/v1/auth', routesAuth);
 app.use('/api/v1/users', routesUsers);
 app.use('/api/v1/products', routesProducts);
+app.use('/api/v1/dailycalories', routesDailyCalories);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 app.use((req, res) => {
   res.status(404).json({ message: 'Not found' });
 });

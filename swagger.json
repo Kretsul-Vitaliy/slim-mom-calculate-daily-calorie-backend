@@ -3,7 +3,6 @@
   "info": {
     "version": "1.0.0",
     "title": "Connections API SlimMom",
-
     "license": {
       "name": "API SlimMom v.1.0 Website ",
       "url": "https://slimcalculatebackend.herokuapp.com/"
@@ -22,9 +21,115 @@
     {
       "name": "Users",
       "description": "User endpoint"
+    },
+    {
+      "name": "DailyCalories",
+      "description": "Calculate daily calories"
     }
   ],
   "paths": {
+    "/api/v1/products": {
+      "post": {
+        "tags": ["Products"],
+        "summary": "Add products",
+        "parameters": [],
+        "requestBody": {
+          "description": "Options object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddProductRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddProductsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/api/v1/dailycalories": {
+      "post": {
+        "tags": ["DailyCalories"],
+        "summary": "Calculate dayli calories",
+        "parameters": [],
+        "requestBody": {
+          "description": "Options object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DailyCaloriesRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyCaloriesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/api/v1/dailycalories/public": {
+      "post": {
+        "tags": ["DailyCalories"],
+        "summary": "Calculate dayli calories public",
+        "parameters": [],
+        "requestBody": {
+          "description": "Options object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DailyCaloriesPublicRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyCaloriesPublicResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {}
+          }
+        }
+      }
+    },
     "/api/v1/auth/signup": {
       "post": {
         "tags": ["Auth"],
@@ -63,18 +168,18 @@
         }
       }
     },
-    "/api/v1/auth/login": {
+    "/api/v1/auth/email": {
       "post": {
         "tags": ["Auth"],
-        "summary": "User login",
+        "summary": "User email",
         "parameters": [],
         "requestBody": {
-          "description": "Login object",
+          "description": "email object",
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/LoginRequest"
+                "$ref": "#/components/schemas/emailRequest"
               }
             }
           }
@@ -85,7 +190,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoginResponse"
+                  "$ref": "#/components/schemas/emailResponse"
                 }
               }
             }
@@ -118,12 +223,7 @@
       "get": {
         "tags": ["Products"],
         "summary": "Get specified product",
-        "parameters": [
-          {
-            "name": "search",
-            "in": "query"
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Success",
@@ -167,7 +267,7 @@
       }
     },
     "/api/v1/users/verify": {
-      "get": {
+      "post": {
         "tags": ["Users"],
         "summary": "repeat email for verify",
         "parameters": [],
@@ -177,7 +277,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserResponse"
+                  "$ref": "#/components/schemas/UserVerifyResponse"
                 }
               }
             }
@@ -194,7 +294,7 @@
       }
     },
     "/api/v1/users/verify/:token": {
-      "post": {
+      "get": {
         "tags": ["Users"],
         "summary": "verify",
         "parameters": [],
@@ -215,28 +315,227 @@
           }
         }
       }
+    },
+    "/api/v1/products/:date": {
+      "get": {
+        "tags": ["Products"],
+        "summary": "Search products by date",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchProductsByDate"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cannot remove product with ID",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/api/v1/products/:id": {
+      "delete": {
+        "tags": ["Products"],
+        "summary": "Remove products by id",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RemoveProductsByIdRespose"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found product by id",
+            "content": {}
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "DailyCaloriesRequest": {
+        "type": "object",
+        "required": ["height", "desiredWeight", "age", "currentWeight", "bloodType"],
+        "properties": {
+          "height": {
+            "type": "number",
+            "description": "Height",
+            "example": 172
+          },
+          "desiredWeight": {
+            "type": "number",
+            "description": "Desired Weight",
+            "example": 80
+          },
+          "age": {
+            "type": "number",
+            "description": "Age",
+            "example": 20
+          },
+          "currentWeight": {
+            "type": "number",
+            "description": "Current weight",
+            "example": 98
+          },
+          "bloodType": {
+            "type": "number",
+            "description": "Blood type",
+            "example": 2
+          }
+        }
+      },
+      "AddProductRequest": {
+        "type": "object",
+        "required": ["height", "weight", "calories", "date"],
+        "properties": {
+          "nameProduct": {
+            "type": "string",
+            "description": "Name product",
+            "example": "Egg"
+          },
+          "weight": {
+            "type": "number",
+            "description": "Desired Weight",
+            "example": 80
+          },
+          "calories": {
+            "type": "number",
+            "description": "Age",
+            "example": 20
+          },
+          "date": {
+            "type": "string",
+            "description": "Current weight",
+            "example": "20.07.2022"
+          }
+        }
+      },
+      "AddProductsResponse": {
+        "type": "object",
+        "properties": {
+          "nameProduct": {
+            "type": "string",
+            "description": "Name product",
+            "example": "Egg"
+          },
+          "weight": {
+            "type": "number",
+            "description": "Desired Weight",
+            "example": 80
+          },
+          "calories": {
+            "type": "number",
+            "description": "Age",
+            "example": 20
+          },
+          "date": {
+            "type": "string",
+            "description": "Current weight",
+            "example": "20.07.2022"
+          },
+          "owner": {
+            "type": "string",
+            "description": "User id",
+            "example": "62c6bf8d4b607ce4bf2e4deb"
+          }
+        }
+      },
+      "DailyCaloriesPublicRequest": {
+        "type": "object",
+        "required": ["height", "desiredWeight", "age", "currentWeight", "bloodType"],
+        "properties": {
+          "height": {
+            "type": "number",
+            "description": "Height",
+            "example": 172
+          },
+          "desiredWeight": {
+            "type": "number",
+            "description": "Desired Weight",
+            "example": 80
+          },
+          "age": {
+            "type": "number",
+            "description": "Age",
+            "example": 20
+          },
+          "currentWeight": {
+            "type": "number",
+            "description": "Current weight",
+            "example": 98
+          },
+          "bloodType": {
+            "type": "number",
+            "description": "Blood type",
+            "example": 2
+          }
+        }
+      },
       "RegistrationRequest": {
         "type": "object",
-        "required": ["name", "login", "password"],
+        "required": ["name", "email", "password"],
         "properties": {
           "name": {
             "type": "string",
             "description": "User's name",
             "example": "test"
           },
-          "login": {
+          "email": {
             "type": "string",
-            "description": "User's login",
+            "description": "User's email",
             "example": "test@test.com"
           },
           "password": {
             "type": "string",
             "description": "User's password",
             "example": "testqwe123"
+          }
+        }
+      },
+      "DailyCaloriesResponse": {
+        "type": "object",
+        "properties": {
+          "calories": {
+            "type": "number",
+            "description": "Daily calorie",
+            "example": "347"
+          },
+          "categories": {
+            "type": "array",
+            "description": "Categories product",
+            "example": ["мясо", "мучные", "молочные"]
+          },
+          "owner": {
+            "type": "string",
+            "description": "User id",
+            "example": "62c6bf8d4b607ce4bf2e4deb"
+          }
+        }
+      },
+      "DailyCaloriesPublicResponse": {
+        "type": "object",
+        "properties": {
+          "calories": {
+            "type": "number",
+            "description": "Daily calorie",
+            "example": "347"
+          },
+          "categories": {
+            "type": "array",
+            "description": "Categories product",
+            "example": ["мясо", "мучные", "молочные"]
           }
         }
       },
@@ -250,7 +549,6 @@
           }
         }
       },
-
       "UserInfo": {
         "type": "object",
         "required": ["currentWeight", "height", "age", "desiredWeight", "bloodType"],
@@ -287,6 +585,68 @@
           }
         }
       },
+      "SearchProductsByDate": {
+        "type": "object",
+        "required": ["nameProduct", "weight", "calories", "date", "owner"],
+        "properties": {
+          "nameProduct": {
+            "type": "string",
+            "description": "Name product",
+            "example": "Egg"
+          },
+          "weight": {
+            "type": "number",
+            "description": "Desired Weight",
+            "example": 80
+          },
+          "calories": {
+            "type": "number",
+            "description": "Age",
+            "example": 20
+          },
+          "date": {
+            "type": "string",
+            "description": "Current weight",
+            "example": "20.07.2022"
+          },
+          "owner": {
+            "type": "string",
+            "description": "User id",
+            "example": "62c6bf8d4b607ce4bf2e4deb"
+          }
+        }
+      },
+      "RemoveProductsByIdRespose": {
+        "type": "object",
+        "required": ["nameProduct", "weight", "calories", "date", "owner"],
+        "properties": {
+          "nameProduct": {
+            "type": "string",
+            "description": "Name product",
+            "example": "Egg"
+          },
+          "weight": {
+            "type": "number",
+            "description": "Desired Weight",
+            "example": 80
+          },
+          "calories": {
+            "type": "number",
+            "description": "Age",
+            "example": 20
+          },
+          "date": {
+            "type": "string",
+            "description": "Current weight",
+            "example": "20.07.2022"
+          },
+          "owner": {
+            "type": "string",
+            "description": "User id",
+            "example": "62c6bf8d4b607ce4bf2e4deb"
+          }
+        }
+      },
       "verifyEmail": {
         "type": "object",
         "required": ["verificationTokenEmail"],
@@ -298,13 +658,23 @@
           }
         }
       },
-      "LoginRequest": {
+      "UserVerifyResponse": {
         "type": "object",
-        "required": ["login", "password"],
         "properties": {
-          "login": {
+          "email": {
             "type": "string",
-            "description": "User's login",
+            "description": "User's email",
+            "example": "test@test.com"
+          }
+        }
+      },
+      "emailRequest": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User's email",
             "example": "test@test.com"
           },
           "password": {
@@ -314,13 +684,13 @@
           }
         }
       },
-      "LoginResponse": {
+      "emailResponse": {
         "type": "object",
-        "required": ["login", "password"],
+        "required": ["email", "password"],
         "properties": {
-          "login": {
+          "email": {
             "type": "string",
-            "description": "User's login",
+            "description": "User's email",
             "example": "test"
           },
           "token": {

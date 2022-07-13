@@ -4,7 +4,7 @@ class EmailService {
     this.sender = sender;
     switch (env) {
       case 'development':
-        this.link = 'http://localhost:3000';
+        this.link = 'http://localhost:5000';
         break;
       case 'test':
         this.link = 'http://localhost:5000';
@@ -13,7 +13,7 @@ class EmailService {
         this.link = 'https://slimcalculatebackend.herokuapp.com';
         break;
       default:
-        this.link = 'http://localhost:3000';
+        this.link = 'http://localhost:5000';
     }
   }
 
@@ -34,7 +34,7 @@ class EmailService {
           button: {
             color: '#22BC66', // Optional action button color
             text: 'Confirm your account',
-            link: `${this.link}/api/v1/auth/verify/${verifyToken}`,
+            link: `${this.link}/api/v1/users/verify/${verifyToken}`,
           },
         },
         outro: 'Якщо Вам потрібна допомога, чекаємо на Вашу відповідь. Дякуємо.',
