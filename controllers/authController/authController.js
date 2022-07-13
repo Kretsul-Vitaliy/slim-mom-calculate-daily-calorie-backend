@@ -67,7 +67,7 @@ class AuthController {
     try {
       await authService.setToken(req.user.id, null);
       await authService.setRefreshToken(req.user.id, null);
-      
+
       res.status(HttpStatusCode.NO_CONTENT).json({
         status: 'success',
         code: HttpStatusCode.NO_CONTENT,
@@ -100,8 +100,6 @@ class AuthController {
   }
 
   async signupGoogleRedirect(req, res, next) {
-    // const linkFront = 'http://localhost:3000';
-
     try {
       // get the code from qs
       const code = req.query.code;
@@ -179,11 +177,6 @@ class AuthController {
       return res.redirect(`${process.env.FRONTEND_URL}/google/error`);
     }
   }
-        })
-      } catch (error) {
-      next(error);
-    }
-  }
 
   async refreshUserAccessToken(req, res, next) {
     try {
@@ -201,7 +194,6 @@ class AuthController {
       next(error);
     }
   }
-
 }
 
 module.exports = new AuthController();
