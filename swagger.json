@@ -168,13 +168,51 @@
         }
       }
     },
-    "/api/v1/auth/email": {
+    "/api/v1/auth/login": {
       "post": {
         "tags": ["Auth"],
         "summary": "User email",
         "parameters": [],
         "requestBody": {
           "description": "email object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/emailRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/emailResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {}
+          },
+          "401": {
+            "description": "Email or password is wrong",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/api/v1/auth/refresh": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Creates new access token if it expired without re-login",
+        "parameters": [],
+        "requestBody": {
+          "description": "",
           "required": true,
           "content": {
             "application/json": {
@@ -695,8 +733,13 @@
           },
           "token": {
             "type": "string",
-            "description": "User's token",
+            "description": "User's access token",
             "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyYzY0N2EzMWU0ZGFmNTA1NTE0MzQ1OCIsImlhdCI6MTY1NzE2MTc5MSwiZXhwIjoxNjU3MTY1MzkxfQ.UkCkSm5CZBDmGJ7gXBJWlQxdRt3udhbtVe7ROefW0B8"
+          },
+          "refreshToken": {
+            "type": "string",
+            "description": "User's refresh token",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImViNzA4ZDFiLTU3YTAtNDA2Yy1iNzFlLWQ2ODNlNWEyMThhOSIsImlhdCI6MTY1NzY2NTI4OCwiZXhwIjoxNjU3NzUxNjg4fQ.Gy9AbCi8xIFN14XwvDzfQMdw_qQymN6EV8F4uKeAYVw"
           }
         }
       },
