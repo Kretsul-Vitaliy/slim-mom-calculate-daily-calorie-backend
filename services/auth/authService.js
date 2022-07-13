@@ -1,5 +1,7 @@
 const { repositoryUsers } = require('../../repository');
 const jwt = require('jsonwebtoken');
+const { SECRET_KEY, REFRESH_SECRET_KEY } = process.env;
+const { randomUUID } = require('crypto');
 const { SECRET_KEY } = process.env;
 // const config = require('config');
 const { default: axios } = require('axios');
@@ -37,6 +39,12 @@ class AuthService {
     return token;
   }
 
+  getRefreshToken() {
+    const id = randomUUID();
+    const payload = { id };
+    const refreshToken = jwt.sign(payload, REFRESH_SECRET_KEY, { expiresIn: '24h' });
+    return refreshToken;
+
   signJwtAccess(object) {
     return jwt.sign(object, SECRET_KEY, { expiresIn: '1h' });
   }
@@ -56,15 +64,17 @@ class AuthService {
     await repositoryUsers.updateToken(id, token);
   }
 
+  async setRefreshToken(id, refreshToken) {
+    await repositoryUsers.updateRefreshToken(id, refreshToken);
+    }
+
   async getUserFromGoogle(email) {
     const user = await repositoryUsers.findByEmail(email);
     return user;
   }
 
   async getGoogleOAuthToken(code) {
-    // const link = 'http://localhost:5000';
     const url = 'https://oauth2.googleapis.com/token';
-
     const values = {
       client_id: process.env.GOOGLE_CLIENT_ID,
       client_secret: process.env.GOOGLE_CLIENT_SECRET,

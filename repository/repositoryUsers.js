@@ -7,6 +7,7 @@ const findById = async id => {
 const findByEmail = async email => {
   return await UserModel.findOne({ email });
 };
+
 const findByVerifyToken = async verificationTokenEmail => {
   return await UserModel.findOne({ verificationTokenEmail });
 };
@@ -14,6 +15,7 @@ const findByVerifyToken = async verificationTokenEmail => {
 const findByIdAndUpdate = async (id, userData) => {
   return await UserModel.findByIdAndUpdate(id, { userData }, { new: true });
 };
+
 const create = async body => {
   const user = new UserModel(body);
   return await user.save();
@@ -21,6 +23,10 @@ const create = async body => {
 
 const updateToken = async (id, token) => {
   return await UserModel.updateOne({ _id: id }, { token });
+};
+
+const updateRefreshToken = async (id, refreshToken) => {
+  return await UserModel.updateOne({ _id: id }, { refreshToken });
 };
 
 const refreshToken = async (id, token, refreshToken) => {
@@ -52,6 +58,7 @@ module.exports = {
   findByVerifyToken,
   create,
   updateToken,
+  updateRefreshToken,
   updateVerify,
   updateGoogleUser,
   refreshToken,

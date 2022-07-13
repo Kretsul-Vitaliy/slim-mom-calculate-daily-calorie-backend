@@ -2,4 +2,5 @@ const validationWraperSchema = require('./validationWraperSchema');
 const validateQuery = require('./validateQuery');
 const guard = require('./guard');
 const limiter = require('./rate-limit');
-module.exports = { validationWraperSchema, guard, limiter, validateQuery };
+const refreshGuard = require('./refreshGuard')
+module.exports = { validationWraperSchema, guard, limiter, validateQuery, refreshGuard };
