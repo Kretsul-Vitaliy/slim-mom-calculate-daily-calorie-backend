@@ -7,7 +7,8 @@ const { EmailService, SenderNodemailer } = require('../../services/email');
 class UsersController {
   async currentUser(req, res, next) {
     try {
-      const { name, email, userData } = req.user;
+      const { name, email, userData, id, avatarURL, role } = req.user;
+      console.log('🚀 ~ file: usersController.js ~ line 11 ~ UsersController ~ currentUser ~ req.user', req.user);
       res.json({
         status: 'success',
         code: HttpStatusCode.OK,
@@ -16,6 +17,9 @@ class UsersController {
             name,
             email,
             userData,
+            id,
+            avatarURL,
+            role,
           },
         },
       });
