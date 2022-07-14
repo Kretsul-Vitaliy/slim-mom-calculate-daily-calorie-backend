@@ -1,4 +1,4 @@
-const {DailyCalorieModel, ProductModel} = require('../models');
+const {DailyCalorieModel, ProductModel, UserModel} = require('../models');
 const {formulaDailyCalories} = require('../util/formulaDaiyCalories');
 
 
@@ -28,6 +28,8 @@ const calculateDailyCalories = async (data) => {
 
 
 const addDailyCalories = async (body, userId) => {
+
+  await UserModel.findOneAndUpdate({_id:userId}, {userData:{...body}}, {new:true,runValidators:true});
 
   const dailyCaloriesAndCategories = await calculateDailyCalories(body);
 

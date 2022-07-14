@@ -3,7 +3,7 @@ const { connectDB } = require('../libs');
 const { mkdir } = require('fs/promises');
 const { PUBLIC_DIR } = require('../libs/constants');
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 connectDB()
   .then(() => {
