@@ -17,7 +17,7 @@ const addProduct = async (userId, body) => {
 
 const removeProduct = async (id, userId) => {
   const deleteProduct = await ProductOnDayModel.findOneAndRemove({ _id: id, owner: userId }, { new: true });
-  console.log('deleteProduct', deleteProduct);
+  // console.log('deleteProduct', deleteProduct);
   return deleteProduct;
 };
 
