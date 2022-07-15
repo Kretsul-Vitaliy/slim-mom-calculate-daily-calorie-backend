@@ -16,10 +16,8 @@ const addProduct = async (userId, body) => {
 };
 
 const removeProduct = async (id, userId) => {
-  const deleteProduct = await ProductOnDayModel.findOneAndDelete(
-    { id, owner: userId },
-    { new: true, runValidators: true },
-  );
+  const deleteProduct = await ProductOnDayModel.findOneAndRemove({ _id: id, owner: userId }, { new: true });
+  console.log('deleteProduct', deleteProduct);
   return deleteProduct;
 };
 
