@@ -7,8 +7,8 @@ const numberRegexp = /^[1-9]+[0-9]*$/;
 const searchProductSchema = new Schema(
   {
     search: { type: String, required: [true, 'Немає запиту'], minlength: 3, maxlength: 254 },
-    page:  { type: String, match: numberRegexp },
-    limit:  { type: String, match: numberRegexp },
+    page: { type: String, match: numberRegexp },
+    limit: { type: String, match: numberRegexp },
   },
   {
     versionKey: false,
@@ -27,11 +27,11 @@ const searchProductSchema = new Schema(
 const searchProductJoiSchema = Joi.object({
   search: Joi.string().allow('').min(3).max(254).required(),
   page: Joi.string().default(1).pattern(numberRegexp),
-  limit: Joi.string().default(100).pattern(numberRegexp),
+  limit: Joi.string().default(200).pattern(numberRegexp),
 });
 
 const SearchProductModel = model('searchproduct', searchProductSchema);
 module.exports = {
-    SearchProductModel,
-    searchProductJoiSchema,
+  SearchProductModel,
+  searchProductJoiSchema,
 };
