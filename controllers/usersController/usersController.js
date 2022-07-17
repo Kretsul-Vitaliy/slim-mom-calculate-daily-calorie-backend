@@ -6,9 +6,10 @@ const { EmailService, SenderNodemailer } = require('../../services/email');
 
 class UsersController {
   async currentUser(req, res, next) {
+    console.log('req', req);
+    const { name, email, userData, id, avatarURL, role } = req.user;
     try {
-      const { name, email, userData, id, avatarURL, role } = req.user;
-      console.log('🚀 ~ file: usersController.js ~ line 11 ~ UsersController ~ currentUser ~ req.user', req.user);
+      // const { session } = req.session;
       res.json({
         status: 'success',
         code: HttpStatusCode.OK,
@@ -22,6 +23,7 @@ class UsersController {
             role,
           },
         },
+        // sid: session._id,
       });
     } catch (error) {
       next(error);

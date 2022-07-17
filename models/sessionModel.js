@@ -4,7 +4,7 @@ const { Schema, model } = mongoose;
 
 const sessionSchema = new Schema(
   {
-    user: {
+    userSID: {
       type: Schema.Types.ObjectId,
       ref: 'user',
     },

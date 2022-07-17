@@ -1,7 +1,7 @@
 const { repositoryUsers } = require('../../repository');
 const jwt = require('jsonwebtoken');
 const { SECRET_KEY, REFRESH_SECRET_KEY } = process.env;
-const { randomUUID } = require('crypto');
+// const { randomUUID } = require('crypto');
 // const config = require('config');
 const { default: axios } = require('axios');
 const qs = require('qs');
@@ -31,17 +31,17 @@ class AuthService {
     return user;
   }
 
-  getToken(user) {
+  getToken(user, sid) {
     const id = user.id;
-    const payload = { id };
+    const payload = { id, sid };
     const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '8h' });
     return token;
   }
 
-  getRefreshToken() {
-    const id = randomUUID();
-    const payload = { id };
-    const refreshToken = jwt.sign(payload, REFRESH_SECRET_KEY, { expiresIn: '24h' });
+  getRefreshToken(user, sid) {
+    const id = user.id;
+    const payload = { id, sid };
+    const refreshToken = jwt.sign(payload, REFRESH_SECRET_KEY, { expiresIn: '1w' });
     return refreshToken;
   }
 
