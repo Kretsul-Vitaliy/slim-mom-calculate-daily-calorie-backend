@@ -9,11 +9,13 @@ const productSchema = new Schema(
   {
     title: {
       ru: { type: String, required: [true, 'Встановіть ім^я продукту'] },
-      ua: { type: String, required: [true, 'Встановіть ім^я продукту'] },
+      ua: { type: String, required: [true, 'Укажите имя продукта'] },
+      en: { type: String, required: [true, 'this name product'] },
     },
     categories: [{ type: String }],
     calories: { type: Number, required: [true, 'Встановіть калорії продукту'] },
     groupBloodNotAllowed: {
+      0: {},
       1: { type: Boolean, required: [true, 'Встановіть групу крові'] },
       2: { type: Boolean, required: [true, 'Встановіть групу крові'] },
       3: { type: Boolean, required: [true, 'Встановіть групу крові'] },

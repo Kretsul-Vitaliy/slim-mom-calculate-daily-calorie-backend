@@ -1,13 +1,17 @@
 const mongoose = require('mongoose');
 const { Schema, model } = mongoose;
 
-const daySchema = new Schema(
+const summarySchema = new Schema(
   {
     date: String,
-    eatenProducts: [{ title: String, weight: Number, kcal: Number, id: String, _id: false }],
-    daySummary: {
+    kcalLeft: Number,
+    kcalConsumed: Number,
+    percentsOfDailyRate: Number,
+    dailyRate: Number,
+    userId: mongoose.Types.ObjectId,
+    owner: {
       type: Schema.Types.ObjectId,
-      ref: 'summary',
+      ref: 'user',
     },
   },
   {
@@ -24,7 +28,7 @@ const daySchema = new Schema(
   },
 );
 
-const DayModel = model('day', daySchema);
+const SummaryModel = model('summary', summarySchema);
 module.exports = {
-  DayModel,
+  SummaryModel,
 };
