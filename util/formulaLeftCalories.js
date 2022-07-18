@@ -1,5 +1,5 @@
 const formulaLeftCalories = (dailyCalories, summaryCaloriesPerDay) => {
-    return Number(dailyCalories) >= Number(summaryCaloriesPerDay) ? Number(dailyCalories) - Number(summaryCaloriesPerDay) : "Вы перевысили дневную норму калорий";
+    return Number(dailyCalories) - Number(summaryCaloriesPerDay);
   };
   
   module.exports = { formulaLeftCalories };
