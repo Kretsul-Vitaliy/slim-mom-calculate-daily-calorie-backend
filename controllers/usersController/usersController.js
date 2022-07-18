@@ -1,6 +1,6 @@
 const { BadRequest, ServiceUnavailable } = require('http-errors');
 const { HttpStatusCode } = require('../../libs');
-const { repositoryUsers } = require('../../repository');
+const { repositoryUsers, repositoryDailyCalories } = require('../../repository');
 const { authService } = require('../../services/auth');
 const { EmailService, SenderNodemailer } = require('../../services/email');
 const jwt = require('jsonwebtoken');
@@ -9,6 +9,8 @@ class UsersController {
   async currentUser(req, res, next) {
     const { name, email, userData, id, avatarURL, role } = req.user;
     const { sid } = jwt.decode(req.user.token);
+    const {calories, categories} = await repositoryDailyCalories.getDailyCaloriesAndCategories(id);
+    const userDataAndDailyCalories = {...userData, calories, categories};
     try {
       // const { session } = req.session;
       res.json({
@@ -18,7 +20,7 @@ class UsersController {
           user: {
             name,
             email,
-            userData,
+            userData:userDataAndDailyCalories,
             id,
             avatarURL,
             role,
