@@ -1,3 +1,5 @@
+const mongoose = require('mongoose');
+const { Types} = mongoose;
 const { ProductModel, ProductOnDayModel } = require('../models');
 
 const getProductsQuery = async (query, page, limit) => {
@@ -20,14 +22,24 @@ const deleteProduct = await ProductOnDayModel.findOneAndRemove({_id:id, owner:us
 return deleteProduct;
 }
 
-const getAllProducts = async (date, userId) => {
+const getAllProductsPerDay = async (date, userId) => {
   const products = await ProductOnDayModel.find({ date, owner: userId });
-  return products;
+  const summaryCalories= await summaryCaloriesPerDay(date, userId);
+  return {products, summaryCalories}
 };
+
+const summaryCaloriesPerDay = async (date, userId) => {
+const [{total}] = await ProductOnDayModel.aggregate([
+  { $match: { owner: Types.ObjectId(userId), date} },
+  { $group: { _id: "summary", total: { $sum: "$calories" } } },
+]);
+return total;
+}
 
 module.exports = {
   getProductsQuery,
   addProduct,
   removeProduct,
-  getAllProducts,
+  getAllProductsPerDay,
+  summaryCaloriesPerDay
 };

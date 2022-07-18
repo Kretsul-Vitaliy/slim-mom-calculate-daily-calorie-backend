@@ -1,5 +1,7 @@
-const { repositoryProducts } = require('../../repository');
+const { repositoryProducts,repositoryDailyCalories, repositorySummaryCalories } = require('../../repository');
 const { HttpStatusCode } = require('../../libs');
+const {formulaLeftCalories} = require('../../util/formulaLeftCalories');
+const {formulaDailtRate} = require('../../util/formulaDailyRate');
 const { NotFound } = require('http-errors');
 
 class ProductsController {
@@ -63,15 +65,22 @@ class ProductsController {
     try {
       const userId = req.user.id;
       const { date } = req.params;
-      const product = await repositoryProducts.getAllProducts(date, userId);
-      if (!product) {
+      const {products,summaryCalories:summaryCaloriesPerDay} = await repositoryProducts.getAllProductsPerDay(date, userId);
+      const {calories:dailyCalories} = await repositoryDailyCalories.getDailyCaloriesAndCategories(userId);
+      const LeftCalories = formulaLeftCalories(dailyCalories,summaryCaloriesPerDay);
+      const percentsOfDailyRate = formulaDailtRate(dailyCalories, LeftCalories);
+      const params = {date, userId, summaryCaloriesPerDay, dailyCalories, LeftCalories, percentsOfDailyRate};
+      const statisticalByDay = await repositorySummaryCalories.addSummaryCalories(params)
+
+      if (!products) {
         throw new NotFound('Not found product by date');
       }
 
       res.json({
         status: 'success',
         code: HttpStatusCode.OK,
-        data: [...product],
+        data: [...products],
+        statisticalByDay
       });
     } catch (error) {
       next(error);

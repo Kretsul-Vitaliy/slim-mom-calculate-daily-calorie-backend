@@ -1,5 +1,5 @@
 const {DailyCalorieModel, ProductModel, UserModel} = require('../models');
-const {formulaDailyCalories} = require('../util/formulaDaiyCalories');
+const {formulaDailyCalories} = require('../util/formulaDailyCalories');
 
 
 const categoriesNotAllowed = async (bloodType) => {
@@ -11,7 +11,8 @@ const categoriesNotAllowed = async (bloodType) => {
   const categories = filterProductsByTypeBlood.reduce((accum, {categories}) => [...new Set([...categories, ...accum])],[]);
 
   return categories;
-}
+
+};
 
 
 const calculateDailyCalories = async (data) => {
@@ -24,7 +25,7 @@ const calculateDailyCalories = async (data) => {
 
    return {dailyCalories, categories}
 
-}
+};
 
 
 const addDailyCalories = async (body, userId) => {
@@ -49,9 +50,18 @@ const addDailyCalories = async (body, userId) => {
 
     return {dailyCalories, categories}
     };
+
+
+    const getDailyCaloriesAndCategories = async (id) => {
+      
+      const result = await DailyCalorieModel.findOne({owned:id}).populate('calories', 'categories');
+
+      return result;
+    };
   
   
   module.exports = {
     addDailyCalories,
-    getDailyCalories
+    getDailyCalories,
+    getDailyCaloriesAndCategories
   };

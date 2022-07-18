@@ -11,10 +11,6 @@ const productOnDaySchema = new Schema(
     weight: { type: Number, required: [true, 'Встановіть вагу продукту'] },
     calories: { type: Number, required: [true, 'Встановіть калорії продукту'] },
     date: { type: String, required: [true, 'Встановіть дату дадавання продукту'] },
-    daySummary: {
-      type: Schema.Types.ObjectId,
-      ref: 'summary',
-    },
     owner: {
       type: SchemaTypes.ObjectId,
       ref: 'user',
