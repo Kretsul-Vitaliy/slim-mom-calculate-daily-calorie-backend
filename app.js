@@ -36,9 +36,9 @@ app.use((req, res, next) => {
 });
 // Подключаем cookies
 app.use(cookieParser());
-// app.use(bodyParser());
 app.use(
   session({
+    name: 'slimMom-command-#1',
     secret: process.env.SESSION_SECRET_KEY,
     store: MongoStore.create({ mongoUrl: process.env.MONGODB_HOST }),
     saveUninitialized: true,

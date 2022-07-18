@@ -14,7 +14,7 @@ const verifyToken = token => {
 };
 
 const guard = async (req, res, next) => {
-  const accessToken = req.header('authorization')?.split(' ')[1] || '';
+  const accessToken = req.get('authorization')?.split(' ')[1] || '';
   const isValidToken = verifyToken(accessToken);
   try {
     if (!isValidToken) {
@@ -23,7 +23,7 @@ const guard = async (req, res, next) => {
     const { id, sid } = jwt.decode(accessToken);
     const userAuthorizationById = await repositoryUsers.findById(id);
     const session = await SessionModel.findById(sid);
-    if (!userAuthorizationById) {
+    if (!userAuthorizationById || userAuthorizationById.token !== accessToken) {
       throw new Unauthorized('Not authorized');
     }
     if (!session) {

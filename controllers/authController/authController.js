@@ -7,6 +7,7 @@ const { EmailService, SenderNodemailer } = require('../../services/email');
 
 const { sessionService } = require('../../services/session');
 const { SummaryModel } = require('../../models/summaryModel');
+const { SessionModel } = require('../../models');
 
 class AuthController {
   async signupUser(req, res, next) {
@@ -104,21 +105,37 @@ class AuthController {
   }
 
   async logoutUser(req, res, next) {
-    try {
-      const refreshToken = req.cookies.refreshToken;
-      const { id } = jwt.decode(refreshToken);
-      // await authService.setToken(req.user.id, null);
-      await authService.setToken(id, null);
-      // await authService.setRefreshToken(req.user.id, null);
-      await authService.setRefreshToken(id, null);
-      res.cookie('refreshToken', '', { maxAge: 0 });
-      res.status(HttpStatusCode.NO_CONTENT).json({
-        status: 'success',
-        code: HttpStatusCode.NO_CONTENT,
+    const { sid } = jwt.decode(req.user.token);
+    await SessionModel.deleteOne({ sid });
+    if (req.session) {
+      req.session.destroy(err => {
+        if (err) {
+          res.status(400).send('Unable to log out');
+        } else {
+          res.send('Logout successful');
+        }
       });
-    } catch (error) {
-      next(error);
+    } else {
+      res.end();
     }
+    // return res.status(204).end();
+    // console.log('req.session', req.user);
+    // try {
+    //   const refreshToken = req.cookies.refreshToken;
+    //   console.log('🚀 ~ file: authController.js ~ line 109 ~ AuthController ~ logoutUser ~ refreshToken', refreshToken);
+    //   const { id } = jwt.decode(refreshToken);
+    //   // await authService.setToken(req.user.id, null);
+    //   await authService.setToken(id, null);
+    //   // await authService.setRefreshToken(req.user.id, null);
+    //   await authService.setRefreshToken(id, null);
+    //   res.cookie('refreshToken', '', { maxAge: 0 });
+    //   res.status(HttpStatusCode.NO_CONTENT).json({
+    //     status: 'success',
+    //     code: HttpStatusCode.NO_CONTENT,
+    //   });
+    // } catch (error) {
+    //   next(error);
+    // }
   }
 
   async signupAuthGoogle(req, res, next) {
