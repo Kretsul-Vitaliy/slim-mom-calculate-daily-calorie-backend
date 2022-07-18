@@ -246,7 +246,7 @@
         }
       }
     },
-    "/api/v1/products?search={название}": {
+    "/api/v1/products?search={name}&page={1}&limit={100}": {
       "get": {
         "tags": ["Products"],
         "summary": "Get specified product",
@@ -261,6 +261,10 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Either 'search' is less then 3/ more then 254 characters, or page/limit is empty",
+            "content": {}
           },
           "404": {
             "description": "Not found",
@@ -746,10 +750,48 @@
       "ProductsResponse": {
         "type": "object",
         "properties": {
+          "total": {
+            "type": "number",
+            "description": "Amount of results found",
+            "example": 111
+          },
           "Products": {
-            "type": "object",
-            "description": "data",
-            "example": "<Name of the product>"
+            "type": "array",
+            "description": "Array of products",
+            "example": [
+              {
+                "title": {
+                  "type": "object",
+                  "description": "Product's names in different languages",
+                  "example": { "en": "Semolina with bran BIO Black bread" }
+                },
+                "groupBloodNotAllowed": {
+                  "type": "array",
+                  "description": "Array of booleans, shows if the product is forbidden for a certain blood group; starts with 'null'",
+                  "example": [null, true, false, false, false]
+                },
+                "categories": {
+                  "type": "array",
+                  "description": "Array of categories names",
+                  "example": ["crops"]
+                },
+                "weight": {
+                  "type": "number",
+                  "description": "Amount of a product in g",
+                  "example": 100
+                },
+                "calories": {
+                  "type": "number",
+                  "description": "Amount of calories in an amount of product, mentioned in 'weight'",
+                  "example": 340
+                },
+                "id": {
+                  "type": "string",
+                  "description": "Product's id",
+                  "example": "5d51694802b2373622ff5584"
+                }
+              }
+            ]
           }
         }
       }
