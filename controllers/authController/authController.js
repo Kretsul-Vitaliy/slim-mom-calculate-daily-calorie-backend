@@ -1,11 +1,13 @@
 const { Conflict, Unauthorized } = require('http-errors');
-
+const jwt = require('jsonwebtoken');
 const { authService } = require('../../services/auth');
 const { HttpStatusCode } = require('../../libs');
 
 const { EmailService, SenderNodemailer } = require('../../services/email');
 
 const { sessionService } = require('../../services/session');
+const { SummaryModel } = require('../../models/summaryModel');
+const { SessionModel } = require('../../models');
 
 class AuthController {
   async signupUser(req, res, next) {
@@ -44,37 +46,96 @@ class AuthController {
         throw new Unauthorized(`Email or password is wrong`);
       }
 
-      const token = authService.getToken(authentificationUser);
-      const refreshToken = authService.getRefreshToken();
-
+      const sid = await sessionService.createSession(authentificationUser.id, req.get('user-agent') || '');
+      const token = authService.getToken(authentificationUser, sid._id);
+      const refreshToken = authService.getRefreshToken(authentificationUser, sid._id);
       await authService.setToken(authentificationUser.id, token);
       await authService.setRefreshToken(authentificationUser.id, refreshToken);
-
-      return res.status(HttpStatusCode.OK).json({
-        status: 'success',
-        code: HttpStatusCode.OK,
-        data: {
+      // const sid = req.session.id;
+      const date = new Date();
+      const today = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+      const todaySummary = await SummaryModel.findOne({ date: today });
+      if (!todaySummary) {
+        return res.status(HttpStatusCode.OK).json({
           token,
           refreshToken,
-        },
-      });
+          sid: sid._id,
+          user: {
+            email: authentificationUser.email,
+            name: authentificationUser.name,
+            id: authentificationUser.id,
+            avatarURL: authentificationUser.avatarURL,
+          },
+          todaySummary: {},
+        });
+      }
+      return res
+        .cookie('refreshToken', refreshToken, 'sid', sid._id, {
+          httpOnly: true,
+          maxAge: 7 * 24 * 60 * 60 * 1000,
+        })
+        .status(HttpStatusCode.OK)
+        .json({
+          status: 'success',
+          code: HttpStatusCode.OK,
+          data: {
+            token,
+            refreshToken,
+            sid: sid._id,
+            user: {
+              email: authentificationUser.email,
+              name: authentificationUser.name,
+              id: authentificationUser.id,
+              avatarURL: authentificationUser.avatarURL,
+            },
+            todaySummary: {
+              date: todaySummary.date,
+              kcalLeft: todaySummary.kcalLeft,
+              kcalConsumed: todaySummary.kcalConsumed,
+              dailyRate: todaySummary.dailyRate,
+              percentsOfDailyRate: todaySummary.percentsOfDailyRate,
+              userId: todaySummary.userId,
+              id: todaySummary._id,
+            },
+          },
+        });
     } catch (error) {
       next(error);
     }
   }
 
   async logoutUser(req, res, next) {
-    try {
-      await authService.setToken(req.user.id, null);
-      await authService.setRefreshToken(req.user.id, null);
-
-      res.status(HttpStatusCode.NO_CONTENT).json({
-        status: 'success',
-        code: HttpStatusCode.NO_CONTENT,
+    const { sid } = jwt.decode(req.user.token);
+    await SessionModel.deleteOne({ sid });
+    if (req.session) {
+      req.session.destroy(err => {
+        if (err) {
+          res.status(400).send('Unable to log out');
+        } else {
+          res.send('Logout successful');
+        }
       });
-    } catch (error) {
-      next(error);
+    } else {
+      res.end();
     }
+    // return res.status(204).end();
+    // console.log('req.session', req.user);
+    // try {
+    //   const refreshToken = req.cookies.refreshToken;
+    //   console.log('🚀 ~ file: authController.js ~ line 109 ~ AuthController ~ logoutUser ~ refreshToken', refreshToken);
+    //   const { id } = jwt.decode(refreshToken);
+    //   // await authService.setToken(req.user.id, null);
+    //   await authService.setToken(id, null);
+    //   // await authService.setRefreshToken(req.user.id, null);
+    //   await authService.setRefreshToken(id, null);
+    //   res.cookie('refreshToken', '', { maxAge: 0 });
+    //   res.status(HttpStatusCode.NO_CONTENT).json({
+    //     status: 'success',
+    //     code: HttpStatusCode.NO_CONTENT,
+    //   });
+    // } catch (error) {
+    //   next(error);
+    // }
   }
 
   async signupAuthGoogle(req, res, next) {
@@ -133,7 +194,7 @@ class AuthController {
       });
 
       const accessToken = await authService.getToken(user);
-      await authService.setToken(user.id, accessToken);
+      await authService.setToken(user._id, accessToken);
       const sendUser = JSON.stringify({
         name: user.name,
         email: user.email,
@@ -145,7 +206,7 @@ class AuthController {
       const session = await sessionService.createSession(user._id, req.get('user-agent') || '');
 
       // create an access token
-      const accessTokenCookie = authService.signJwtAccess({ ...user, session: session._id });
+      // const accessTokenCookie = authService.signJwtAccess({ ...user, session: session._id });
 
       // create a refresh token
       const refreshTokenCookie = authService.signJwtRefresh({ ...user, session: session._id });
@@ -165,12 +226,14 @@ class AuthController {
         maxAge: 3.154e10, // 1 year
       };
 
-      res.cookie('accessToken', accessTokenCookie, accessTokenCookieOptions);
+      // res.cookie('accessToken', accessTokenCookie, accessTokenCookieOptions);
 
-      res.cookie('refreshToken', refreshTokenCookie, refreshTokenCookieOptions);
+      // res.cookie('refreshToken', refreshTokenCookie, refreshTokenCookieOptions);
 
       // redirect back to client
-      return res.redirect(`${process.env.FRONTEND_URL}/google?user=${sendUser}`);
+      return res
+        .cookie('refreshToken', refreshTokenCookie, refreshTokenCookieOptions)
+        .redirect(`${process.env.FRONTEND_URL}/google?user=${sendUser}`);
     } catch (error) {
       // next(error);
       console.error(error);

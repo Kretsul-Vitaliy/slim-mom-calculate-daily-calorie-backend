@@ -3,12 +3,14 @@ const { HttpStatusCode } = require('../../libs');
 const { repositoryUsers } = require('../../repository');
 const { authService } = require('../../services/auth');
 const { EmailService, SenderNodemailer } = require('../../services/email');
+const jwt = require('jsonwebtoken');
 
 class UsersController {
   async currentUser(req, res, next) {
+    const { name, email, userData, id, avatarURL, role } = req.user;
+    const { sid } = jwt.decode(req.user.token);
     try {
-      const { name, email, userData, id, avatarURL, role } = req.user;
-      console.log('🚀 ~ file: usersController.js ~ line 11 ~ UsersController ~ currentUser ~ req.user', req.user);
+      // const { session } = req.session;
       res.json({
         status: 'success',
         code: HttpStatusCode.OK,
@@ -22,6 +24,7 @@ class UsersController {
             role,
           },
         },
+        sid,
       });
     } catch (error) {
       next(error);

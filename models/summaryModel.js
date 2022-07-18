@@ -1,19 +1,22 @@
 const mongoose = require('mongoose');
-
 const { Schema, model } = mongoose;
 
-const sessionSchema = new Schema(
+const summarySchema = new Schema(
   {
-    userSID: {
+    date: String,
+    kcalLeft: Number,
+    kcalConsumed: Number,
+    percentsOfDailyRate: Number,
+    dailyRate: Number,
+    userId: mongoose.Types.ObjectId,
+    owner: {
       type: Schema.Types.ObjectId,
       ref: 'user',
     },
-    valid: { type: Boolean, default: true },
-    userAgent: { type: String },
   },
   {
-    timestamps: true,
     versionKey: false,
+    timestamps: true,
     toJSON: {
       virtuals: true,
       transform: function (doc, ret) {
@@ -25,8 +28,7 @@ const sessionSchema = new Schema(
   },
 );
 
-const SessionModel = model('session', sessionSchema);
-
+const SummaryModel = model('summary', summarySchema);
 module.exports = {
-  SessionModel,
+  SummaryModel,
 };
