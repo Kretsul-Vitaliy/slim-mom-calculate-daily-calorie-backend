@@ -3,11 +3,12 @@ const { HttpStatusCode } = require('../../libs');
 const { repositoryUsers } = require('../../repository');
 const { authService } = require('../../services/auth');
 const { EmailService, SenderNodemailer } = require('../../services/email');
+const jwt = require('jsonwebtoken');
 
 class UsersController {
   async currentUser(req, res, next) {
-    console.log('req', req);
     const { name, email, userData, id, avatarURL, role } = req.user;
+    const { sid } = jwt.decode(req.user.token);
     try {
       // const { session } = req.session;
       res.json({
@@ -23,7 +24,7 @@ class UsersController {
             role,
           },
         },
-        // sid: session._id,
+        sid,
       });
     } catch (error) {
       next(error);
