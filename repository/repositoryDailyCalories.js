@@ -55,7 +55,7 @@ const addDailyCalories = async (body, userId) => {
     const getDailyCaloriesAndCategories = async (id) => {
       
       const result = await DailyCalorieModel.findOne({owned:id}).populate('calories', 'categories');
-
+      
       return result;
     };
   
