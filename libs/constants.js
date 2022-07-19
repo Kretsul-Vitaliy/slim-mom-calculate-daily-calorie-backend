@@ -16,7 +16,7 @@ const LIMITIER_COUNT = 10;
 
 const emailRegexp =
   /^[-!#$%&'*+/=?^_`{|}~A-Za-z0-9]+(?:\.[-!#$%&'*+/=?^_`{|}~A-Za-z0-9]+)*@([A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?\.)+[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9]/;
-const nameRegexp = /^[a-zA-Z. ']+$/;
+const nameRegexp = /^[A-Za-zА-Яа-яЁёІіЇїЄє' ]+$/;
 
 const Role = {
   ADMIN: 'administrator',
