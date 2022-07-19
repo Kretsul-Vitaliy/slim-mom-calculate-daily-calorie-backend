@@ -9,8 +9,8 @@ class UsersController {
   async currentUser(req, res, next) {
     const { name, email, userData, id, avatarURL, role } = req.user;
     const { sid } = jwt.decode(req.user.token);
-    const {calories, categories} = await repositoryDailyCalories.getDailyCaloriesAndCategories(id);
-    const userDataAndDailyCalories = {...userData, calories, categories};
+    const { calories, categories } = await repositoryDailyCalories.getDailyCaloriesAndCategories(id);
+    const userDataAndDailyCalories = { ...userData, calories, categories };
     try {
       // const { session } = req.session;
       res.json({
@@ -20,7 +20,7 @@ class UsersController {
           user: {
             name,
             email,
-            userData:userDataAndDailyCalories,
+            userData: userDataAndDailyCalories,
             id,
             avatarURL,
             role,
@@ -41,10 +41,10 @@ class UsersController {
         await repositoryUsers.updateVerify(userFromToken.id, true);
         const token = await authService.getToken(userFromToken);
         await authService.setToken(userFromToken.id, token);
-        return res
-          .status(HttpStatusCode.OK)
-          .json({ status: 'success', code: HttpStatusCode.OK, data: { message: 'Verification successful' } })
-          .redirect(`${process.env.FRONTEND_URL}/google?email=${userFromToken.email}&token=${token}`);
+        return res.status(HttpStatusCode.OK).redirect(`${process.env.FRONTEND_URL}/login`);
+        // .json({ status: 'success', code: HttpStatusCode.OK, data: { message: 'Verification successful' } })
+
+        //  .redirect(`${process.env.FRONTEND_URL}/google?email=${userFromToken.email}&token=${token}`)
       }
       throw new BadRequest('User not found');
     } catch (error) {
