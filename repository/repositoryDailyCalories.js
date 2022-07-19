@@ -22,7 +22,6 @@ const calculateDailyCalories = async (data) => {
 
    const params = {height, desiredWeight, age, currentWeight};
    const dailyCalories = formulaDailyCalories(params);
-
    return {dailyCalories, categories}
 
 };
@@ -53,7 +52,7 @@ const addDailyCalories = async (body, userId) => {
 
 
     const getDailyCaloriesAndCategories = async (id) => {
-      const result = await DailyCalorieModel.findOne({owner:id}).populate('calories', 'categories');
+      const result = await DailyCalorieModel.findOne({owner:id}).sort({'_id':-1}).limit(1).populate('calories', 'categories');
       return result;
     };
   
