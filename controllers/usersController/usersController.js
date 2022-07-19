@@ -9,11 +9,31 @@ class UsersController {
   async currentUser(req, res, next) {
     const { name, email, userData, id, avatarURL, role } = req.user;
     const { sid } = jwt.decode(req.user.token);
-    const { calories, categories } = await repositoryDailyCalories.getDailyCaloriesAndCategories(id);
-    const userDataAndDailyCalories = { ...userData, calories, categories };
+    const getCaloriesAndCategories= await repositoryDailyCalories.getDailyCaloriesAndCategories(id);
+
     try {
-      // const { session } = req.session;
-      res.json({
+      if(!getCaloriesAndCategories) {
+        return res.json({
+          status: 'success',
+          code: HttpStatusCode.OK,
+          data: {
+            user: {
+              name,
+              email,
+              userData: { ...userData, calories:null, categories:null},
+              id,
+              avatarURL,
+              role,
+            },
+          },
+          sid,
+        });
+      }
+
+      const {calories, categories } = getCaloriesAndCategories;
+      const userDataAndDailyCalories = { ...userData, calories, categories };
+
+       res.json({
         status: 'success',
         code: HttpStatusCode.OK,
         data: {
@@ -28,6 +48,10 @@ class UsersController {
         },
         sid,
       });
+      
+  
+
+
     } catch (error) {
       next(error);
     }
