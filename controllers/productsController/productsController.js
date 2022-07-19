@@ -66,22 +66,28 @@ class ProductsController {
       const userId = req.user.id;
       const { date } = req.params;
       const {products,summaryCalories:summaryCaloriesPerDay} = await repositoryProducts.getAllProductsPerDay(date, userId);
-      const {calories:dailyCalories} = await repositoryDailyCalories.getDailyCaloriesAndCategories(userId);
-      const LeftCalories = formulaLeftCalories(dailyCalories,summaryCaloriesPerDay);
-      const percentsOfDailyRate = formulaDailtRate(dailyCalories, LeftCalories);
-      const params = {date, userId, summaryCaloriesPerDay, dailyCalories, LeftCalories, percentsOfDailyRate};
-      const statisticalByDay = await repositorySummaryCalories.addSummaryCalories(params)
 
-      if (!products) {
-        throw new NotFound('Not found product by date');
+      if (products && summaryCaloriesPerDay) {
+        const {calories:dailyCalories} = await repositoryDailyCalories.getDailyCaloriesAndCategories(userId);
+        const LeftCalories = formulaLeftCalories(dailyCalories,summaryCaloriesPerDay);
+        const percentsOfDailyRate = formulaDailtRate(dailyCalories, LeftCalories);
+        const params = {date, userId, summaryCaloriesPerDay, dailyCalories, LeftCalories, percentsOfDailyRate};
+        const statisticalByDay = await repositorySummaryCalories.addSummaryCalories(params);
+
+        return res.json({
+          status: 'success',
+          code: HttpStatusCode.OK,
+          data: [...products],
+          statisticalByDay
+        });
       }
 
       res.json({
         status: 'success',
         code: HttpStatusCode.OK,
-        data: [...products],
-        statisticalByDay
+        data: [],
       });
+
     } catch (error) {
       next(error);
     }

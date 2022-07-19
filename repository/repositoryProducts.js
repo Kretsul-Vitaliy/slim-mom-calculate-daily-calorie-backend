@@ -29,11 +29,19 @@ const getAllProductsPerDay = async (date, userId) => {
 };
 
 const summaryCaloriesPerDay = async (date, userId) => {
-const [{total}] = await ProductOnDayModel.aggregate([
+const [total] = await ProductOnDayModel.aggregate([
   { $match: { owner: Types.ObjectId(userId), date} },
   { $group: { _id: "summary", total: { $sum: "$calories" } } },
 ]);
-return total;
+
+
+if(!total) {
+return false;
+}
+
+const {total:totalSummary} = total;
+
+return totalSummary;
 }
 
 module.exports = {
