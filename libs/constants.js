@@ -12,7 +12,7 @@ const LIMIT_JSON = 5000; // 500kb
 const LIMIT_FORM = 5000; // 500kb
 const PUBLIC_DIR = 'public';
 const LIMITIER_TIME = 15 * 60 * 1000;
-const LIMITIER_COUNT = 10;
+const LIMITIER_COUNT = 30;
 
 const emailRegexp =
   /^[-!#$%&'*+/=?^_`{|}~A-Za-z0-9]+(?:\.[-!#$%&'*+/=?^_`{|}~A-Za-z0-9]+)*@([A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?\.)+[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9]/;
